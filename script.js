@@ -1,6 +1,6 @@
 const WHATSAPP_NUMBER = '541150373123';
 
-const initialStock = {
+const baseStock = {
   'torpedo-joyero|color:Suela': 2,
   'torpedo-joyero|color:Borravino': 1,
   'torpedo-joyero|color:Chocolate': 1,
@@ -8,17 +8,15 @@ const initialStock = {
   'bombillon-simple|formato:Curvo|pico:Bronce': 2,
   'bombillon-simple|formato:Recto|pico:Bronce': 2,
   'bombillon-premium|formato:Curvo|pico:Bronce': 2,
-  'bombillon-premium|formato:Curvo|pico:Alpaca': 1
+  'bombillon-premium|formato:Curvo|pico:Alpaca': 1,
 };
 
 const products = {
   'torpedo-joyero': {
     name: 'Torpedo cincelado joyero',
     price: 60000,
-    qtyInput: 'mateQty',
-    addButton: 'mateAddButton',
-    stockBadge: 'mateStockBadge',
-    stockMessage: 'mateStockMessage',
+    stockMessageId: 'mateStockMessage',
+    qtyInputId: 'mateQty',
     getOptions: () => ({
       color: document.getElementById('mateColorSelect').value,
     }),
@@ -26,10 +24,8 @@ const products = {
   'bombillon-simple': {
     name: 'Bombillón anilla simple',
     price: 30000,
-    qtyInput: 'bombillonSimpleQty',
-    addButton: 'bombillonSimpleAddButton',
-    stockBadge: 'bombillonSimpleStockBadge',
-    stockMessage: 'bombillonSimpleStockMessage',
+    stockMessageId: 'bombillonSimpleStockMessage',
+    qtyInputId: 'bombillonSimpleQty',
     getOptions: () => ({
       formato: document.getElementById('bombillonSimpleShapeSelect').value,
       pico: document.getElementById('bombillonSimpleTipSelect').value,
@@ -38,10 +34,8 @@ const products = {
   'bombillon-premium': {
     name: 'Bombillón cincelado premium ancho',
     price: 32000,
-    qtyInput: 'bombillonPremiumQty',
-    addButton: 'bombillonPremiumAddButton',
-    stockBadge: 'bombillonPremiumStockBadge',
-    stockMessage: 'bombillonPremiumStockMessage',
+    stockMessageId: 'bombillonPremiumStockMessage',
+    qtyInputId: 'bombillonPremiumQty',
     getOptions: () => ({
       formato: document.getElementById('bombillonPremiumShapeSelect').value,
       pico: document.getElementById('bombillonPremiumTipSelect').value,
@@ -69,113 +63,93 @@ document.querySelectorAll('.nav-links a').forEach(link => {
 const mateThumbButtons = document.querySelectorAll('#mateThumbs .thumb');
 const mateMainImage = document.getElementById('mateMainImage');
 const mateColorSelect = document.getElementById('mateColorSelect');
+const mateMainButton = document.querySelector('[data-alt="Mate Torpedo cincelado joyero"]');
 
 mateThumbButtons.forEach((button, index) => {
   button.addEventListener('click', () => {
     mateThumbButtons.forEach(btn => btn.classList.remove('active'));
     button.classList.add('active');
     mateMainImage.src = button.dataset.image;
-    mateMainImage.dataset.zoomSrc = button.dataset.image;
     mateMainImage.alt = `Mate Torpedo cincelado joyero color ${button.dataset.colorName}`;
     mateColorSelect.selectedIndex = index;
+
+    if (mateMainButton) {
+      mateMainButton.dataset.full = button.dataset.image;
+      mateMainButton.dataset.alt = `Mate Torpedo cincelado joyero color ${button.dataset.colorName}`;
+    }
+
     updateStockUI();
   });
 });
 
-mateColorSelect.addEventListener('change', () => {
+mateColorSelect?.addEventListener('change', () => {
   const selected = [...mateThumbButtons].find(btn => btn.dataset.colorName.toLowerCase() === mateColorSelect.value.toLowerCase());
   if (selected) selected.click();
   updateStockUI();
 });
 
-['bombillonSimpleShapeSelect', 'bombillonPremiumTipSelect'].forEach(id => {
-  const element = document.getElementById(id);
-  element?.addEventListener('change', updateStockUI);
+document.querySelectorAll('[data-stock-watch]').forEach(input => {
+  input.addEventListener('change', updateStockUI);
 });
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
+  return new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+    maximumFractionDigits: 0
+  }).format(value);
 }
 
-function normalizeOptions(options) {
+function optionsKey(options) {
   return Object.entries(options)
     .map(([key, value]) => `${key}:${value}`)
     .join('|');
 }
 
+function buildStockKey(productId, options) {
+  return `${productId}|${optionsKey(options)}`;
+}
+
 function buildCartKey(productId, options) {
-  return `${productId}|${normalizeOptions(options)}`;
+  return buildStockKey(productId, options);
 }
 
-function getProductStockKey(productId) {
-  const product = products[productId];
-  return buildCartKey(productId, product.getOptions());
-}
-
-function getQtyInCart(stockKey) {
+function getCartQtyForKey(key) {
   return cart
-    .filter(item => item.key === stockKey)
+    .filter(item => item.key === key)
     .reduce((acc, item) => acc + item.qty, 0);
 }
 
-function getAvailableStock(productId) {
-  const stockKey = getProductStockKey(productId);
-  const baseStock = initialStock[stockKey] || 0;
-  return Math.max(0, baseStock - getQtyInCart(stockKey));
+function getAvailableStock(productId, options) {
+  const key = buildStockKey(productId, options);
+  const total = baseStock[key] || 0;
+  const alreadyInCart = getCartQtyForKey(key);
+  return Math.max(0, total - alreadyInCart);
 }
 
-function updateProductStockUI(productId) {
-  const product = products[productId];
-  const available = getAvailableStock(productId);
-  const qtyInput = document.getElementById(product.qtyInput);
-  const addButton = document.getElementById(product.addButton);
-  const badge = document.getElementById(product.stockBadge);
-  const message = document.getElementById(product.stockMessage);
-
-  if (!qtyInput || !addButton || !badge || !message) return;
-
-  qtyInput.max = String(Math.max(available, 1));
-
-  if (available <= 0) {
-    addButton.disabled = true;
-    qtyInput.disabled = true;
-    badge.hidden = false;
-    message.textContent = 'Sin stock para esta variante.';
-  } else {
-    addButton.disabled = false;
-    qtyInput.disabled = false;
-    badge.hidden = true;
-    message.textContent = '';
-    if (Number(qtyInput.value || 1) > available) {
-      qtyInput.value = available;
-    }
-  }
+function getProductQty(product) {
+  const input = document.getElementById(product.qtyInputId);
+  return Math.max(1, Number(input?.value || 1));
 }
 
-function updateStockUI() {
-  Object.keys(products).forEach(updateProductStockUI);
+function setProductQty(product, qty) {
+  const input = document.getElementById(product.qtyInputId);
+  if (input) input.value = Math.max(1, qty);
 }
 
 function addToCart(productId) {
   const product = products[productId];
-  const qtyInput = document.getElementById(product.qtyInput);
-  const qty = Math.max(1, Number(qtyInput.value || 1));
   const options = product.getOptions();
   const key = buildCartKey(productId, options);
-  const available = getAvailableStock(productId);
+  const available = getAvailableStock(productId, options);
+  const requestedQty = getProductQty(product);
 
   if (available <= 0) {
     updateStockUI();
     return;
   }
 
-  if (qty > available) {
-    alert('No hay suficiente stock disponible para esa variante.');
-    qtyInput.value = available;
-    updateStockUI();
-    return;
-  }
-
+  const qty = Math.min(requestedQty, available);
   const existing = cart.find(item => item.key === key);
 
   if (existing) {
@@ -191,6 +165,15 @@ function addToCart(productId) {
     });
   }
 
+  if (requestedQty > available) {
+    const message = document.getElementById(product.stockMessageId);
+    if (message) {
+      message.textContent = 'Agregamos la cantidad máxima disponible para esta variante.';
+      message.className = 'stock-message limit';
+    }
+  }
+
+  setProductQty(product, 1);
   renderCart();
   updateStockUI();
   openCart();
@@ -203,15 +186,13 @@ document.querySelectorAll('.add-to-cart').forEach(button => {
 const cartDrawer = document.getElementById('cartDrawer');
 const cartBackdrop = document.getElementById('cartBackdrop');
 const openCartButton = document.getElementById('openCartButton');
-const floatingCartButton = document.getElementById('floatingCartButton');
 const closeCartButton = document.getElementById('closeCartButton');
 const cartItems = document.getElementById('cartItems');
 const emptyCartMessage = document.getElementById('emptyCartMessage');
 const cartTotal = document.getElementById('cartTotal');
 const cartCount = document.getElementById('cartCount');
-const floatingCartCount = document.getElementById('floatingCartCount');
-const checkoutWhatsappButton = document.getElementById('checkoutWhatsappButton');
 const checkoutForm = document.getElementById('checkoutForm');
+const checkoutWhatsappButton = document.getElementById('checkoutWhatsappButton');
 
 function openCart() {
   cartDrawer.classList.add('open');
@@ -228,7 +209,6 @@ function closeCart() {
 }
 
 openCartButton?.addEventListener('click', openCart);
-floatingCartButton?.addEventListener('click', openCart);
 closeCartButton?.addEventListener('click', closeCart);
 cartBackdrop?.addEventListener('click', closeCart);
 
@@ -239,20 +219,14 @@ function removeItem(itemKey) {
 }
 
 function changeQty(itemKey, delta) {
-  const item = cart.find(entry => entry.key === itemKey);
-  if (!item) return;
+  cart = cart.map(item => {
+    if (item.key !== itemKey) return item;
 
-  const maxStock = initialStock[item.key] || item.qty;
-  const nextQty = item.qty + delta;
+    const currentStock = baseStock[item.key] || 0;
+    const newQty = Math.max(1, Math.min(currentStock, item.qty + delta));
+    return { ...item, qty: newQty };
+  });
 
-  if (nextQty < 1) return;
-
-  if (nextQty > maxStock) {
-    alert('No hay más stock disponible para esta variante.');
-    return;
-  }
-
-  item.qty = nextQty;
   renderCart();
   updateStockUI();
 }
@@ -264,11 +238,7 @@ function getTotal() {
 function renderCart() {
   cartItems.innerHTML = '';
 
-  if (cart.length === 0) {
-    emptyCartMessage.style.display = 'block';
-  } else {
-    emptyCartMessage.style.display = 'none';
-  }
+  emptyCartMessage.style.display = cart.length === 0 ? 'block' : 'none';
 
   cart.forEach(item => {
     const article = document.createElement('article');
@@ -278,7 +248,8 @@ function renderCart() {
       .map(([key, value]) => `<p><strong>${capitalize(key)}:</strong> ${value}</p>`)
       .join('');
 
-    const canAddMore = item.qty < (initialStock[item.key] || item.qty);
+    const maxQty = baseStock[item.key] || item.qty;
+    const disablePlus = item.qty >= maxQty ? 'disabled' : '';
 
     article.innerHTML = `
       <div class="cart-item-top">
@@ -293,7 +264,7 @@ function renderCart() {
         <div>
           <button type="button" data-qty="minus" data-key="${item.key}">-</button>
           <span style="padding:0 10px;font-weight:900;">${item.qty}</span>
-          <button type="button" data-qty="plus" data-key="${item.key}" ${canAddMore ? '' : 'disabled'}>+</button>
+          <button type="button" data-qty="plus" data-key="${item.key}" ${disablePlus}>+</button>
         </div>
         <strong>${formatCurrency(item.price * item.qty)}</strong>
       </div>
@@ -315,13 +286,54 @@ function renderCart() {
 
   const total = getTotal();
   cartTotal.textContent = formatCurrency(total);
-
-  const totalUnits = cart.reduce((acc, item) => acc + item.qty, 0);
-  cartCount.textContent = totalUnits;
-  floatingCartCount.textContent = totalUnits;
+  cartCount.textContent = cart.reduce((acc, item) => acc + item.qty, 0);
+  checkoutWhatsappButton.disabled = cart.length === 0;
 }
 
-function buildWhatsappMessage(formData) {
+function updateStockUI() {
+  Object.entries(products).forEach(([productId, product]) => {
+    const options = product.getOptions();
+    const available = getAvailableStock(productId, options);
+    const message = document.getElementById(product.stockMessageId);
+    const button = document.querySelector(`.add-to-cart[data-product-id="${productId}"]`);
+    const qtyInput = document.getElementById(product.qtyInputId);
+
+    if (!message || !button || !qtyInput) return;
+
+    if (available <= 0) {
+      message.textContent = 'Sin stock';
+      message.className = 'stock-message out';
+      button.disabled = true;
+      qtyInput.value = 1;
+      qtyInput.disabled = true;
+    } else {
+      message.textContent = '';
+      message.className = 'stock-message';
+      button.disabled = false;
+      qtyInput.disabled = false;
+      qtyInput.max = String(available);
+
+      if (Number(qtyInput.value) > available) {
+        qtyInput.value = available;
+      }
+    }
+  });
+}
+
+checkoutForm?.addEventListener('submit', event => {
+  event.preventDefault();
+
+  if (cart.length === 0) {
+    openCart();
+    return;
+  }
+
+  if (!checkoutForm.checkValidity()) {
+    checkoutForm.reportValidity();
+    return;
+  }
+
+  const data = new FormData(checkoutForm);
   const lines = cart.map((item, index) => {
     const options = Object.entries(item.options)
       .map(([key, value]) => `${capitalize(key)}: ${value}`)
@@ -329,7 +341,7 @@ function buildWhatsappMessage(formData) {
     return `${index + 1}. ${item.name} | ${options} | Cantidad: ${item.qty} | Subtotal: ${formatCurrency(item.price * item.qty)}`;
   }).join('\n');
 
-  return `Hola La Cebada, quiero finalizar esta compra:
+  const message = `Hola La Cebada, quiero finalizar esta compra:
 
 PRODUCTOS:
 ${lines}
@@ -337,73 +349,55 @@ ${lines}
 TOTAL ESTIMADO: ${formatCurrency(getTotal())}
 
 DATOS PARA ENVÍO:
-Nombre y apellido: ${formData.get('nombre')}
-Teléfono: ${formData.get('telefono')}
-Email: ${formData.get('email')}
-Provincia: ${formData.get('provincia')}
-Localidad: ${formData.get('localidad')}
-Código postal: ${formData.get('cp')}
-Dirección: ${formData.get('direccion')}
+Nombre y apellido: ${data.get('nombre')}
+Teléfono: ${data.get('telefono')}
+Provincia: ${data.get('provincia')}
+Localidad: ${data.get('localidad')}
+Código postal: ${data.get('codigoPostal')}
+Dirección: ${data.get('direccion')}
 
-Medio de pago: Transferencia bancaria.
+Quedo atento/a para coordinar transferencia bancaria y envío por Correo Argentino.`;
 
-Quedo atento/a para coordinar pago y envío por Correo Argentino.`;
-}
-
-checkoutWhatsappButton.addEventListener('click', () => {
-  if (cart.length === 0) {
-    alert('Agregá al menos un producto al carrito antes de finalizar la compra.');
-    return;
-  }
-
-  if (!checkoutForm.reportValidity()) {
-    return;
-  }
-
-  const formData = new FormData(checkoutForm);
-  const message = buildWhatsappMessage(formData);
-  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-  window.open(url, '_blank', 'noopener');
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
 });
 
 function capitalize(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-document.getElementById('scrollToProducts').addEventListener('click', () => {
+document.getElementById('scrollToProducts')?.addEventListener('click', () => {
   document.getElementById('productos').scrollIntoView({ behavior: 'smooth' });
 });
 
 const imageModal = document.getElementById('imageModal');
-const imageModalImg = document.getElementById('imageModalImg');
-const imageModalClose = document.getElementById('imageModalClose');
+const modalImage = document.getElementById('modalImage');
+const modalClose = document.getElementById('modalClose');
 
-document.addEventListener('click', event => {
-  const zoomable = event.target.closest('.zoomable');
-  if (!zoomable) return;
-
-  imageModalImg.src = zoomable.dataset.zoomSrc || zoomable.src;
-  imageModalImg.alt = zoomable.alt || 'Imagen ampliada';
-  imageModal.classList.add('open');
-  imageModal.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('no-scroll');
+document.querySelectorAll('.image-zoom').forEach(button => {
+  button.addEventListener('click', () => {
+    modalImage.src = button.dataset.full;
+    modalImage.alt = button.dataset.alt || 'Imagen ampliada';
+    imageModal.classList.add('open');
+    imageModal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('no-scroll');
+  });
 });
 
-function closeImageModal() {
+function closeModal() {
   imageModal.classList.remove('open');
   imageModal.setAttribute('aria-hidden', 'true');
-  imageModalImg.src = '';
+  modalImage.src = '';
   document.body.classList.remove('no-scroll');
 }
 
-imageModalClose.addEventListener('click', closeImageModal);
-imageModal.addEventListener('click', event => {
-  if (event.target === imageModal) closeImageModal();
+modalClose?.addEventListener('click', closeModal);
+imageModal?.addEventListener('click', event => {
+  if (event.target === imageModal) closeModal();
 });
 
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape') {
-    closeImageModal();
+    closeModal();
     closeCart();
   }
 });
