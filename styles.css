@@ -48,19 +48,37 @@ button:disabled, .btn.disabled { opacity: .55; cursor: not-allowed; transform: n
   border-bottom: 1px solid var(--border);
 }
 .topbar {
-  background: linear-gradient(90deg, #4b2718, #8f4f2c);
+  background:
+    linear-gradient(90deg, rgba(49, 25, 14, .98), rgba(126, 66, 36, .98)),
+    radial-gradient(circle at 20% 50%, rgba(201, 137, 73, .32), transparent 22rem);
   color: #fff7ea;
-  font-weight: 800;
-  font-size: .9rem;
+  border-bottom: 1px solid rgba(255, 232, 195, .24);
 }
 .topbar-content {
-  min-height: 40px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 18px;
   text-align: center;
 }
+
+.opening-banner {
+  font-family: "Marcellus", Georgia, serif;
+  font-size: clamp(.95rem, 2vw, 1.18rem);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: #ffe4b5;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, .24);
+  font-weight: 400;
+}
+
+.topbar-note {
+  font-size: .88rem;
+  font-weight: 800;
+  color: rgba(255, 250, 242, .92);
+}
+
 .nav { min-height: 86px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .brand { display: inline-flex; align-items: center; gap: 14px; }
 .brand-logo {
@@ -141,7 +159,10 @@ p { color: var(--muted); line-height: 1.75; }
 }
 .info-strip-grid { grid-template-columns: repeat(3, 1fr); gap: 18px; }
 .info-strip-grid > div, .faq-grid details {
-  border: 1px solid var(--border); background: rgba(255,250,243,.76); border-radius: var(--radius-lg); padding: 22px;
+  border: 1px solid var(--border);
+  background: rgba(255,250,243,.76);
+  border-radius: var(--radius-lg);
+  padding: 22px;
 }
 .info-strip-grid strong { display: block; margin-bottom: 8px; color: var(--brand-deep); }
 .section-heading { max-width: 760px; margin-bottom: 34px; }
@@ -272,7 +293,14 @@ input:focus, select:focus { outline: 3px solid rgba(143,79,44,.14); border-color
   .info-strip-grid, .benefits-grid { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
-  .topbar-content { flex-direction: column; padding: 8px 0; gap: 4px; }
+  .topbar-content {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  text-align: center;
+}
   .nav-toggle { display: block; }
   .nav-links {
     position: fixed; top: 126px; left: 16px; right: 16px; display: none; flex-direction: column; align-items: stretch; gap: 12px;
@@ -283,4 +311,11 @@ input:focus, select:focus { outline: 3px solid rgba(143,79,44,.14); border-color
   .hero { padding-top: 58px; }
   .footer-content { grid-template-columns: 1fr; }
   .qty-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .opening-banner {
+    font-size: .92rem;
+    letter-spacing: .09em;
+  }
 }
