@@ -1,32 +1,25 @@
-LA CEBADA - SITIO WEB
+LA CEBADA - SITIO WEB REVISADO
 
-Contenido:
-- index.html
-- styles.css
-- script.js
-- favicon.png / favicon.ico
-- carpeta assets con fotos y logo
+Esta versión corrige la integración completa entre:
+- Catálogo
+- Carrito
+- Formulario de envío
+- WhatsApp
+- Registro de ventas en Google Sheets
+- Control de stock desde Google Sheets
 
-Qué incluye:
-- Diseño rústico artesanal y responsive
-- Catálogo con imágenes reales de productos
-- Carrito de compras del lado del cliente
-- Botón final de WhatsApp para coordinar pago y envío
-- Quiénes somos
-- Por qué elegirnos
-- Envíos a todo el país por Correo Argentino
-- Favicon con el logo de la marca
+Hojas esperadas en Google Sheets:
+1. VENTAS
+2. STOCK
 
-Siguientes mejoras recomendadas:
-- Fotos homogéneas por variante (mismo ángulo y fondo)
-- FAQ, medios de pago y políticas
-- Sección de reseñas reales
-- Fotos adicionales para futuros productos
+Columnas de STOCK:
+SKU | PRODUCTO | TIPO | OPCION_1 | OPCION_2 | STOCK | ACTIVO
 
-
-ACTUALIZACIÓN STOCK GOOGLE SHEETS
-- La web ahora lee el stock desde la pestaña STOCK de Google Sheets usando Apps Script.
-- El stock exacto permanece oculto para el cliente.
-- Si una variante tiene STOCK 0 o ACTIVO NO, la web muestra "Sin stock" y bloquea la compra.
-- El stock NO se descuenta automáticamente al recibir un pedido. Se controla manualmente desde Google Sheets.
-- Las ventas se registran en la pestaña VENTAS.
+Notas:
+- El stock se lee desde Google Sheets.
+- El cliente no ve la cantidad exacta de stock.
+- Si STOCK es 0 o ACTIVO es NO, aparece "Sin stock".
+- El stock NO baja automáticamente al recibir pedidos.
+- Las columnas ESTADO DEL PEDIDO y OBSERVACIONES quedan vacías para control manual.
+- Para cambios de stock, solo modificá Google Sheets. No hace falta pasar por GitHub/Vercel.
+- Para cambios de diseño, textos, fotos o productos nuevos, sí hay que actualizar GitHub/Vercel.

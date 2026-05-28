@@ -22,19 +22,14 @@ const products = {
     qtyInputId: 'mateQty',
     buttonSelector: '[data-product-id="torpedo-joyero"]',
     stockMessageId: 'mateStockMessage',
-    getOptions: () => ({
-      color: document.getElementById('mateColorSelect').value,
-    }),
+    getOptions: () => ({ color: document.getElementById('mateColorSelect').value }),
     getQty: () => Number(document.getElementById('mateQty').value || 1),
-    getSku: (options) => {
-      const map = {
-        Suela: 'torpedo-suela',
-        Borravino: 'torpedo-borravino',
-        Chocolate: 'torpedo-chocolate',
-        Negro: 'torpedo-negro',
-      };
-      return map[options.color];
-    },
+    getSku: (options) => ({
+      Suela: 'torpedo-suela',
+      Borravino: 'torpedo-borravino',
+      Chocolate: 'torpedo-chocolate',
+      Negro: 'torpedo-negro',
+    }[options.color]),
   },
   'bombillon-simple': {
     name: 'Bombillón anilla simple',
@@ -74,11 +69,7 @@ function normalizeSlug(value) {
 }
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('es-AR', {
-    style: 'currency',
-    currency: 'ARS',
-    maximumFractionDigits: 0
-  }).format(value);
+  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
 }
 
 function capitalize(text) {
@@ -94,17 +85,13 @@ function optionText(options) {
 function getStockForSku(sku) {
   const item = stockBySku[sku];
 
-  if (!item || item.activo === false) {
-    return 0;
-  }
+  if (!item || item.activo === false) return 0;
 
   return Math.max(0, Number(item.stock || 0));
 }
 
 function getReservedQtyForSku(sku) {
-  return cart
-    .filter(item => item.sku === sku)
-    .reduce((acc, item) => acc + item.qty, 0);
+  return cart.filter(item => item.sku === sku).reduce((acc, item) => acc + item.qty, 0);
 }
 
 function getRemainingStock(productId) {
@@ -114,12 +101,7 @@ function getRemainingStock(productId) {
   const stock = getStockForSku(sku);
   const reserved = getReservedQtyForSku(sku);
 
-  return {
-    sku,
-    stock,
-    reserved,
-    remaining: Math.max(0, stock - reserved),
-  };
+  return { sku, stock, reserved, remaining: Math.max(0, stock - reserved) };
 }
 
 function updateProductStockUI(productId) {
@@ -130,8 +112,6 @@ function updateProductStockUI(productId) {
   const stockInfo = getRemainingStock(productId);
 
   if (!qtyInput || !button || !message) return;
-
-  qtyInput.max = Math.max(1, stockInfo.remaining);
 
   if (stockInfo.remaining <= 0) {
     qtyInput.value = 1;
@@ -146,6 +126,7 @@ function updateProductStockUI(productId) {
   qtyInput.disabled = false;
   button.disabled = false;
   button.classList.remove('disabled');
+  qtyInput.max = stockInfo.remaining;
   message.textContent = 'Disponible';
   message.classList.remove('out-of-stock');
 
@@ -156,10 +137,6 @@ function updateProductStockUI(productId) {
 
 function updateAllProductStockUI() {
   Object.keys(products).forEach(updateProductStockUI);
-}
-
-function buildCartKey(sku) {
-  return sku;
 }
 
 function addToCart(productId) {
@@ -183,21 +160,12 @@ function addToCart(productId) {
     return;
   }
 
-  const key = buildCartKey(sku);
-  const existing = cart.find(item => item.key === key);
+  const existing = cart.find(item => item.sku === sku);
 
   if (existing) {
     existing.qty += requestedQty;
   } else {
-    cart.push({
-      key,
-      sku,
-      productId,
-      name: product.name,
-      price: product.price,
-      options,
-      qty: requestedQty,
-    });
+    cart.push({ key: sku, sku, productId, name: product.name, price: product.price, options, qty: requestedQty });
   }
 
   renderCart();
@@ -244,7 +212,6 @@ function renderCart() {
   if (!cartItems) return;
 
   cartItems.innerHTML = '';
-
   emptyCartMessage.style.display = cart.length === 0 ? 'block' : 'none';
 
   cart.forEach(item => {
@@ -289,7 +256,6 @@ function renderCart() {
   });
 
   const itemCount = cart.reduce((acc, item) => acc + item.qty, 0);
-
   cartTotal.textContent = formatCurrency(getTotal());
   cartCount.textContent = itemCount;
   if (checkoutButton) checkoutButton.disabled = cart.length === 0;
@@ -315,11 +281,6 @@ function validateCartAgainstStock() {
 }
 
 function buildOrderPayload(formData) {
-  const productos = cart.map(item => item.name).join(' | ');
-  const cantidades = cart.map(item => String(item.qty)).join(' | ');
-  const variantes = cart.map(item => optionText(item.options)).join(' | ');
-  const total = formatCurrency(getTotal());
-
   return {
     nombre: formData.get('nombre') || '',
     telefono: formData.get('telefono') || '',
@@ -328,10 +289,10 @@ function buildOrderPayload(formData) {
     localidad: formData.get('localidad') || '',
     direccion: formData.get('direccion') || '',
     codigoPostal: formData.get('codigoPostal') || '',
-    productos,
-    cantidades,
-    variantes,
-    total,
+    productos: cart.map(item => item.name).join(' | '),
+    cantidades: cart.map(item => String(item.qty)).join(' | '),
+    variantes: cart.map(item => optionText(item.options)).join(' | '),
+    total: formatCurrency(getTotal()),
     medioPago: 'Transferencia bancaria',
   };
 }
@@ -363,9 +324,7 @@ async function saveOrderToGoogleSheets(order) {
   await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
     method: 'POST',
     mode: 'no-cors',
-    headers: {
-      'Content-Type': 'text/plain;charset=utf-8',
-    },
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(order),
   });
 }
@@ -391,10 +350,7 @@ function syncCartWithUpdatedStock() {
     })
     .filter(Boolean);
 
-  if (changed) {
-    renderCart();
-  }
-
+  if (changed) renderCart();
   updateAllProductStockUI();
 }
 
@@ -432,11 +388,7 @@ function loadStockFromGoogleSheets() {
         };
       });
 
-      stockBySku = {
-        ...fallbackStock,
-        ...nextStock,
-      };
-
+      stockBySku = { ...fallbackStock, ...nextStock };
       syncCartWithUpdatedStock();
       resolve(stockBySku);
     };
@@ -493,7 +445,7 @@ function initProductGallery() {
   const mateThumbButtons = document.querySelectorAll('#mateThumbs .thumb');
   const mateMainImage = document.getElementById('mateMainImage');
   const mateColorSelect = document.getElementById('mateColorSelect');
-  const mainZoomButton = document.querySelector('.product-gallery .gallery-main-button');
+  const mainZoomButton = document.querySelector('.gallery-main-button');
 
   mateThumbButtons.forEach((button, index) => {
     button.addEventListener('click', () => {
@@ -555,10 +507,8 @@ function initCart() {
 
   document.querySelectorAll('[data-stock-watch]').forEach(element => {
     element.addEventListener('change', updateAllProductStockUI);
+    element.addEventListener('input', updateAllProductStockUI);
   });
-
-  document.getElementById('bombillonSimpleTipSelect')?.addEventListener('change', updateAllProductStockUI);
-  document.getElementById('bombillonPremiumShapeSelect')?.addEventListener('change', updateAllProductStockUI);
 
   document.getElementById('checkoutForm')?.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -574,13 +524,14 @@ function initCart() {
     }
 
     const checkoutButton = document.getElementById('checkoutWhatsappButton');
+    const originalHTML = checkoutButton.innerHTML;
     const formData = new FormData(event.currentTarget);
     const order = buildOrderPayload(formData);
     const message = buildWhatsappMessage(order);
     const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 
     checkoutButton.disabled = true;
-    checkoutButton.dataset.originalText = checkoutButton.textContent;
+    checkoutButton.innerHTML = 'Registrando pedido...';
 
     try {
       await saveOrderToGoogleSheets(order);
@@ -588,6 +539,7 @@ function initCart() {
       console.warn('No se pudo confirmar el guardado en Google Sheets:', error);
     } finally {
       checkoutButton.disabled = false;
+      checkoutButton.innerHTML = originalHTML;
       window.open(whatsappUrl, '_blank', 'noopener');
     }
   });
