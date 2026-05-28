@@ -1,97 +1,77 @@
 const WHATSAPP_NUMBER = '541150373123';
 const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbysoYTLNiyI71_FAz7wxOZtyYDIWDtRSGgDeb7Hx6cyaKEb-N5fzgivaQZEoC61TnV5/exec';
 
-const baseStock = {
-  'torpedo-joyero|color:Suela': 2,
-  'torpedo-joyero|color:Borravino': 1,
-  'torpedo-joyero|color:Chocolate': 1,
-  'torpedo-joyero|color:Negro': 1,
-  'bombillon-simple|formato:Curvo|pico:Bronce': 2,
-  'bombillon-simple|formato:Recto|pico:Bronce': 2,
-  'bombillon-premium|formato:Curvo|pico:Bronce': 2,
-  'bombillon-premium|formato:Curvo|pico:Alpaca': 1,
+const fallbackStock = {
+  'torpedo-suela': { stock: 2, activo: true },
+  'torpedo-borravino': { stock: 1, activo: true },
+  'torpedo-chocolate': { stock: 1, activo: true },
+  'torpedo-negro': { stock: 1, activo: true },
+  'bombillon-anilla-simple-curvo-bronce': { stock: 2, activo: true },
+  'bombillon-anilla-simple-recto-bronce': { stock: 2, activo: true },
+  'bombillon-cincelado-premium-ancho-curvo-bronce': { stock: 2, activo: true },
+  'bombillon-cincelado-premium-ancho-curvo-alpaca': { stock: 1, activo: true },
 };
+
+let stockBySku = { ...fallbackStock };
+let cart = [];
 
 const products = {
   'torpedo-joyero': {
     name: 'Torpedo cincelado joyero',
     price: 60000,
-    stockMessageId: 'mateStockMessage',
     qtyInputId: 'mateQty',
+    buttonSelector: '[data-product-id="torpedo-joyero"]',
+    stockMessageId: 'mateStockMessage',
     getOptions: () => ({
       color: document.getElementById('mateColorSelect').value,
     }),
+    getQty: () => Number(document.getElementById('mateQty').value || 1),
+    getSku: (options) => {
+      const map = {
+        Suela: 'torpedo-suela',
+        Borravino: 'torpedo-borravino',
+        Chocolate: 'torpedo-chocolate',
+        Negro: 'torpedo-negro',
+      };
+      return map[options.color];
+    },
   },
   'bombillon-simple': {
     name: 'Bombillón anilla simple',
     price: 30000,
-    stockMessageId: 'bombillonSimpleStockMessage',
     qtyInputId: 'bombillonSimpleQty',
+    buttonSelector: '[data-product-id="bombillon-simple"]',
+    stockMessageId: 'bombillonSimpleStockMessage',
     getOptions: () => ({
       formato: document.getElementById('bombillonSimpleShapeSelect').value,
       pico: document.getElementById('bombillonSimpleTipSelect').value,
     }),
+    getQty: () => Number(document.getElementById('bombillonSimpleQty').value || 1),
+    getSku: (options) => `bombillon-anilla-simple-${normalizeSlug(options.formato)}-${normalizeSlug(options.pico)}`,
   },
   'bombillon-premium': {
     name: 'Bombillón cincelado premium ancho',
     price: 32000,
-    stockMessageId: 'bombillonPremiumStockMessage',
     qtyInputId: 'bombillonPremiumQty',
+    buttonSelector: '[data-product-id="bombillon-premium"]',
+    stockMessageId: 'bombillonPremiumStockMessage',
     getOptions: () => ({
       formato: document.getElementById('bombillonPremiumShapeSelect').value,
       pico: document.getElementById('bombillonPremiumTipSelect').value,
     }),
+    getQty: () => Number(document.getElementById('bombillonPremiumQty').value || 1),
+    getSku: (options) => `bombillon-cincelado-premium-ancho-${normalizeSlug(options.formato)}-${normalizeSlug(options.pico)}`,
   }
 };
 
-let cart = [];
-
-const navToggle = document.querySelector('.nav-toggle');
-const navLinks = document.querySelector('.nav-links');
-
-navToggle?.addEventListener('click', () => {
-  const isOpen = navLinks.classList.toggle('open');
-  navToggle.setAttribute('aria-expanded', String(isOpen));
-});
-
-document.querySelectorAll('.nav-links a').forEach(link => {
-  link.addEventListener('click', () => {
-    navLinks.classList.remove('open');
-    navToggle?.setAttribute('aria-expanded', 'false');
-  });
-});
-
-const mateThumbButtons = document.querySelectorAll('#mateThumbs .thumb');
-const mateMainImage = document.getElementById('mateMainImage');
-const mateColorSelect = document.getElementById('mateColorSelect');
-const mateMainButton = document.querySelector('[data-alt="Mate Torpedo cincelado joyero"]');
-
-mateThumbButtons.forEach((button, index) => {
-  button.addEventListener('click', () => {
-    mateThumbButtons.forEach(btn => btn.classList.remove('active'));
-    button.classList.add('active');
-    mateMainImage.src = button.dataset.image;
-    mateMainImage.alt = `Mate Torpedo cincelado joyero color ${button.dataset.colorName}`;
-    mateColorSelect.selectedIndex = index;
-
-    if (mateMainButton) {
-      mateMainButton.dataset.full = button.dataset.image;
-      mateMainButton.dataset.alt = `Mate Torpedo cincelado joyero color ${button.dataset.colorName}`;
-    }
-
-    updateStockUI();
-  });
-});
-
-mateColorSelect?.addEventListener('change', () => {
-  const selected = [...mateThumbButtons].find(btn => btn.dataset.colorName.toLowerCase() === mateColorSelect.value.toLowerCase());
-  if (selected) selected.click();
-  updateStockUI();
-});
-
-document.querySelectorAll('[data-stock-watch]').forEach(input => {
-  input.addEventListener('change', updateStockUI);
-});
+function normalizeSlug(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-');
+}
 
 function formatCurrency(value) {
   return new Intl.NumberFormat('es-AR', {
@@ -101,135 +81,153 @@ function formatCurrency(value) {
   }).format(value);
 }
 
-function optionsKey(options) {
+function capitalize(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+function optionText(options) {
   return Object.entries(options)
-    .map(([key, value]) => `${key}:${value}`)
-    .join('|');
+    .map(([key, value]) => `${capitalize(key)}: ${value}`)
+    .join(', ');
 }
 
-function buildStockKey(productId, options) {
-  return `${productId}|${optionsKey(options)}`;
+function getStockForSku(sku) {
+  const item = stockBySku[sku];
+
+  if (!item || item.activo === false) {
+    return 0;
+  }
+
+  return Math.max(0, Number(item.stock || 0));
 }
 
-function buildCartKey(productId, options) {
-  return buildStockKey(productId, options);
-}
-
-function getCartQtyForKey(key) {
+function getReservedQtyForSku(sku) {
   return cart
-    .filter(item => item.key === key)
+    .filter(item => item.sku === sku)
     .reduce((acc, item) => acc + item.qty, 0);
 }
 
-function getAvailableStock(productId, options) {
-  const key = buildStockKey(productId, options);
-  const total = baseStock[key] || 0;
-  const alreadyInCart = getCartQtyForKey(key);
-  return Math.max(0, total - alreadyInCart);
+function getRemainingStock(productId) {
+  const product = products[productId];
+  const options = product.getOptions();
+  const sku = product.getSku(options);
+  const stock = getStockForSku(sku);
+  const reserved = getReservedQtyForSku(sku);
+
+  return {
+    sku,
+    stock,
+    reserved,
+    remaining: Math.max(0, stock - reserved),
+  };
 }
 
-function getProductQty(product) {
-  const input = document.getElementById(product.qtyInputId);
-  return Math.max(1, Number(input?.value || 1));
+function updateProductStockUI(productId) {
+  const product = products[productId];
+  const qtyInput = document.getElementById(product.qtyInputId);
+  const button = document.querySelector(product.buttonSelector);
+  const message = document.getElementById(product.stockMessageId);
+  const stockInfo = getRemainingStock(productId);
+
+  if (!qtyInput || !button || !message) return;
+
+  qtyInput.max = Math.max(1, stockInfo.remaining);
+
+  if (stockInfo.remaining <= 0) {
+    qtyInput.value = 1;
+    qtyInput.disabled = true;
+    button.disabled = true;
+    button.classList.add('disabled');
+    message.textContent = 'Sin stock';
+    message.classList.add('out-of-stock');
+    return;
+  }
+
+  qtyInput.disabled = false;
+  button.disabled = false;
+  button.classList.remove('disabled');
+  message.textContent = 'Disponible';
+  message.classList.remove('out-of-stock');
+
+  if (Number(qtyInput.value || 1) > stockInfo.remaining) {
+    qtyInput.value = stockInfo.remaining;
+  }
 }
 
-function setProductQty(product, qty) {
-  const input = document.getElementById(product.qtyInputId);
-  if (input) input.value = Math.max(1, qty);
+function updateAllProductStockUI() {
+  Object.keys(products).forEach(updateProductStockUI);
+}
+
+function buildCartKey(sku) {
+  return sku;
 }
 
 function addToCart(productId) {
   const product = products[productId];
   const options = product.getOptions();
-  const key = buildCartKey(productId, options);
-  const available = getAvailableStock(productId, options);
-  const requestedQty = getProductQty(product);
+  const sku = product.getSku(options);
+  const requestedQty = Math.max(1, product.getQty());
+  const stock = getStockForSku(sku);
+  const reserved = getReservedQtyForSku(sku);
+  const remaining = Math.max(0, stock - reserved);
 
-  if (available <= 0) {
-    updateStockUI();
+  if (remaining <= 0) {
+    alert('Esta variante está sin stock.');
+    updateAllProductStockUI();
     return;
   }
 
-  const qty = Math.min(requestedQty, available);
+  if (requestedQty > remaining) {
+    alert('No hay stock suficiente para esa cantidad.');
+    updateAllProductStockUI();
+    return;
+  }
+
+  const key = buildCartKey(sku);
   const existing = cart.find(item => item.key === key);
 
   if (existing) {
-    existing.qty += qty;
+    existing.qty += requestedQty;
   } else {
     cart.push({
       key,
+      sku,
       productId,
       name: product.name,
       price: product.price,
       options,
-      qty,
+      qty: requestedQty,
     });
   }
 
-  if (requestedQty > available) {
-    const message = document.getElementById(product.stockMessageId);
-    if (message) {
-      message.textContent = 'Agregamos la cantidad máxima disponible para esta variante.';
-      message.className = 'stock-message limit';
-    }
-  }
-
-  setProductQty(product, 1);
   renderCart();
-  updateStockUI();
+  updateAllProductStockUI();
   openCart();
 }
-
-document.querySelectorAll('.add-to-cart').forEach(button => {
-  button.addEventListener('click', () => addToCart(button.dataset.productId));
-});
-
-const cartDrawer = document.getElementById('cartDrawer');
-const cartBackdrop = document.getElementById('cartBackdrop');
-const openCartButton = document.getElementById('openCartButton');
-const closeCartButton = document.getElementById('closeCartButton');
-const cartItems = document.getElementById('cartItems');
-const emptyCartMessage = document.getElementById('emptyCartMessage');
-const cartTotal = document.getElementById('cartTotal');
-const cartCount = document.getElementById('cartCount');
-const checkoutForm = document.getElementById('checkoutForm');
-const checkoutWhatsappButton = document.getElementById('checkoutWhatsappButton');
-
-function openCart() {
-  cartDrawer.classList.add('open');
-  cartBackdrop.classList.add('visible');
-  cartDrawer.setAttribute('aria-hidden', 'false');
-  document.body.classList.add('no-scroll');
-}
-
-function closeCart() {
-  cartDrawer.classList.remove('open');
-  cartBackdrop.classList.remove('visible');
-  cartDrawer.setAttribute('aria-hidden', 'true');
-  document.body.classList.remove('no-scroll');
-}
-
-openCartButton?.addEventListener('click', openCart);
-closeCartButton?.addEventListener('click', closeCart);
-cartBackdrop?.addEventListener('click', closeCart);
 
 function removeItem(itemKey) {
   cart = cart.filter(item => item.key !== itemKey);
   renderCart();
-  updateStockUI();
+  updateAllProductStockUI();
 }
 
 function changeQty(itemKey, delta) {
-  cart = cart.map(item => {
-    if (item.key !== itemKey) return item;
+  const item = cart.find(cartItem => cartItem.key === itemKey);
+  if (!item) return;
 
-    const currentStock = baseStock[item.key] || 0;
-    const newQty = Math.max(1, Math.min(currentStock, item.qty + delta));
-    return { ...item, qty: newQty };
-  });
+  if (delta > 0) {
+    const stock = getStockForSku(item.sku);
+    const reserved = getReservedQtyForSku(item.sku);
 
+    if (reserved >= stock) {
+      alert('No hay stock suficiente para agregar más unidades.');
+      return;
+    }
+  }
+
+  item.qty = Math.max(1, item.qty + delta);
   renderCart();
-  updateStockUI();
+  updateAllProductStockUI();
 }
 
 function getTotal() {
@@ -237,6 +235,14 @@ function getTotal() {
 }
 
 function renderCart() {
+  const cartItems = document.getElementById('cartItems');
+  const emptyCartMessage = document.getElementById('emptyCartMessage');
+  const cartTotal = document.getElementById('cartTotal');
+  const cartCount = document.getElementById('cartCount');
+  const checkoutButton = document.getElementById('checkoutWhatsappButton');
+
+  if (!cartItems) return;
+
   cartItems.innerHTML = '';
 
   emptyCartMessage.style.display = cart.length === 0 ? 'block' : 'none';
@@ -248,9 +254,6 @@ function renderCart() {
     const optionsList = Object.entries(item.options)
       .map(([key, value]) => `<p><strong>${capitalize(key)}:</strong> ${value}</p>`)
       .join('');
-
-    const maxQty = baseStock[item.key] || item.qty;
-    const disablePlus = item.qty >= maxQty ? 'disabled' : '';
 
     article.innerHTML = `
       <div class="cart-item-top">
@@ -264,8 +267,8 @@ function renderCart() {
       <div class="cart-item-actions">
         <div>
           <button type="button" data-qty="minus" data-key="${item.key}">-</button>
-          <span style="padding:0 10px;font-weight:900;">${item.qty}</span>
-          <button type="button" data-qty="plus" data-key="${item.key}" ${disablePlus}>+</button>
+          <span style="padding:0 10px;font-weight:800;">${item.qty}</span>
+          <button type="button" data-qty="plus" data-key="${item.key}">+</button>
         </div>
         <strong>${formatCurrency(item.price * item.qty)}</strong>
       </div>
@@ -285,164 +288,330 @@ function renderCart() {
     });
   });
 
-  const total = getTotal();
-  cartTotal.textContent = formatCurrency(total);
-  cartCount.textContent = cart.reduce((acc, item) => acc + item.qty, 0);
-  checkoutWhatsappButton.disabled = cart.length === 0;
+  const itemCount = cart.reduce((acc, item) => acc + item.qty, 0);
+
+  cartTotal.textContent = formatCurrency(getTotal());
+  cartCount.textContent = itemCount;
+  if (checkoutButton) checkoutButton.disabled = cart.length === 0;
 }
 
-function updateStockUI() {
-  Object.entries(products).forEach(([productId, product]) => {
-    const options = product.getOptions();
-    const available = getAvailableStock(productId, options);
-    const message = document.getElementById(product.stockMessageId);
-    const button = document.querySelector(`.add-to-cart[data-product-id="${productId}"]`);
-    const qtyInput = document.getElementById(product.qtyInputId);
+function validateCartAgainstStock() {
+  for (const item of cart) {
+    const stock = getStockForSku(item.sku);
+    const qtyInCart = getReservedQtyForSku(item.sku);
 
-    if (!message || !button || !qtyInput) return;
+    if (stock <= 0) {
+      alert(`La variante ${item.name} (${optionText(item.options)}) está sin stock.`);
+      return false;
+    }
 
-    if (available <= 0) {
-      message.textContent = 'Sin stock';
-      message.className = 'stock-message out';
-      button.disabled = true;
-      qtyInput.value = 1;
-      qtyInput.disabled = true;
-    } else {
-      message.textContent = '';
-      message.className = 'stock-message';
-      button.disabled = false;
-      qtyInput.disabled = false;
-      qtyInput.max = String(available);
+    if (qtyInCart > stock) {
+      alert(`No hay stock suficiente para ${item.name} (${optionText(item.options)}).`);
+      return false;
+    }
+  }
 
-      if (Number(qtyInput.value) > available) {
-        qtyInput.value = available;
+  return true;
+}
+
+function buildOrderPayload(formData) {
+  const productos = cart.map(item => item.name).join(' | ');
+  const cantidades = cart.map(item => String(item.qty)).join(' | ');
+  const variantes = cart.map(item => optionText(item.options)).join(' | ');
+  const total = formatCurrency(getTotal());
+
+  return {
+    nombre: formData.get('nombre') || '',
+    telefono: formData.get('telefono') || '',
+    email: formData.get('email') || '',
+    provincia: formData.get('provincia') || '',
+    localidad: formData.get('localidad') || '',
+    direccion: formData.get('direccion') || '',
+    codigoPostal: formData.get('codigoPostal') || '',
+    productos,
+    cantidades,
+    variantes,
+    total,
+    medioPago: 'Transferencia bancaria',
+  };
+}
+
+function buildWhatsappMessage(order) {
+  const lines = cart.map((item, index) => {
+    return `${index + 1}. ${item.name} | ${optionText(item.options)} | Cantidad: ${item.qty} | Subtotal: ${formatCurrency(item.price * item.qty)}`;
+  }).join('\n');
+
+  return `Hola La Cebada, quiero finalizar esta compra:
+
+${lines}
+
+Total estimado: ${formatCurrency(getTotal())}
+
+Datos para el envío:
+Nombre: ${order.nombre}
+Teléfono: ${order.telefono}
+Email: ${order.email}
+Provincia: ${order.provincia}
+Localidad: ${order.localidad}
+Dirección: ${order.direccion}
+Código postal: ${order.codigoPostal}
+
+Medio de pago: Transferencia bancaria`;
+}
+
+async function saveOrderToGoogleSheets(order) {
+  await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8',
+    },
+    body: JSON.stringify(order),
+  });
+}
+
+function syncCartWithUpdatedStock() {
+  let changed = false;
+
+  cart = cart
+    .map(item => {
+      const stock = getStockForSku(item.sku);
+
+      if (stock <= 0) {
+        changed = true;
+        return null;
       }
+
+      if (item.qty > stock) {
+        changed = true;
+        return { ...item, qty: stock };
+      }
+
+      return item;
+    })
+    .filter(Boolean);
+
+  if (changed) {
+    renderCart();
+  }
+
+  updateAllProductStockUI();
+}
+
+function loadStockFromGoogleSheets() {
+  return new Promise((resolve, reject) => {
+    const callbackName = `stockCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+    const script = document.createElement('script');
+    const timeout = window.setTimeout(() => {
+      cleanup();
+      reject(new Error('Timeout al cargar stock'));
+    }, 9000);
+
+    function cleanup() {
+      window.clearTimeout(timeout);
+      delete window[callbackName];
+      script.remove();
+    }
+
+    window[callbackName] = (response) => {
+      cleanup();
+
+      if (!response || response.ok !== true || !Array.isArray(response.stock)) {
+        reject(new Error('Respuesta de stock inválida'));
+        return;
+      }
+
+      const nextStock = {};
+
+      response.stock.forEach(item => {
+        if (!item.sku) return;
+
+        nextStock[item.sku] = {
+          stock: Number(item.stock || 0),
+          activo: item.activo !== false,
+        };
+      });
+
+      stockBySku = {
+        ...fallbackStock,
+        ...nextStock,
+      };
+
+      syncCartWithUpdatedStock();
+      resolve(stockBySku);
+    };
+
+    script.onerror = () => {
+      cleanup();
+      reject(new Error('No se pudo cargar stock'));
+    };
+
+    const separator = GOOGLE_SHEETS_WEB_APP_URL.includes('?') ? '&' : '?';
+    script.src = `${GOOGLE_SHEETS_WEB_APP_URL}${separator}callback=${callbackName}&_=${Date.now()}`;
+    document.body.appendChild(script);
+  });
+}
+
+function openCart() {
+  const cartDrawer = document.getElementById('cartDrawer');
+  const cartBackdrop = document.getElementById('cartBackdrop');
+
+  cartDrawer.classList.add('open');
+  cartBackdrop.classList.add('visible');
+  cartDrawer.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('no-scroll');
+}
+
+function closeCart() {
+  const cartDrawer = document.getElementById('cartDrawer');
+  const cartBackdrop = document.getElementById('cartBackdrop');
+
+  cartDrawer.classList.remove('open');
+  cartBackdrop.classList.remove('visible');
+  cartDrawer.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('no-scroll');
+}
+
+function initNavigation() {
+  const navToggle = document.querySelector('.nav-toggle');
+  const navLinks = document.querySelector('.nav-links');
+
+  navToggle?.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  document.querySelectorAll('.nav-links a').forEach(link => {
+    link.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      navToggle?.setAttribute('aria-expanded', 'false');
+    });
+  });
+}
+
+function initProductGallery() {
+  const mateThumbButtons = document.querySelectorAll('#mateThumbs .thumb');
+  const mateMainImage = document.getElementById('mateMainImage');
+  const mateColorSelect = document.getElementById('mateColorSelect');
+  const mainZoomButton = document.querySelector('.product-gallery .gallery-main-button');
+
+  mateThumbButtons.forEach((button, index) => {
+    button.addEventListener('click', () => {
+      mateThumbButtons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      mateMainImage.src = button.dataset.image;
+      mateMainImage.alt = `Mate Torpedo cincelado joyero color ${button.dataset.colorName}`;
+
+      if (mainZoomButton) {
+        mainZoomButton.dataset.full = button.dataset.image;
+        mainZoomButton.dataset.alt = `Mate Torpedo cincelado joyero color ${button.dataset.colorName}`;
+      }
+
+      mateColorSelect.selectedIndex = index;
+      updateProductStockUI('torpedo-joyero');
+    });
+  });
+
+  mateColorSelect?.addEventListener('change', () => {
+    const selected = [...mateThumbButtons].find(btn => btn.dataset.colorName.toLowerCase() === mateColorSelect.value.toLowerCase());
+    if (selected) selected.click();
+  });
+
+  document.querySelectorAll('.image-zoom').forEach(button => {
+    button.addEventListener('click', () => {
+      const modal = document.getElementById('imageModal');
+      const modalImage = document.getElementById('modalImage');
+
+      modalImage.src = button.dataset.full;
+      modalImage.alt = button.dataset.alt || '';
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('no-scroll');
+    });
+  });
+
+  document.getElementById('modalClose')?.addEventListener('click', closeImageModal);
+  document.getElementById('imageModal')?.addEventListener('click', event => {
+    if (event.target.id === 'imageModal') closeImageModal();
+  });
+}
+
+function closeImageModal() {
+  const modal = document.getElementById('imageModal');
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('no-scroll');
+}
+
+function initCart() {
+  document.querySelectorAll('.add-to-cart').forEach(button => {
+    button.addEventListener('click', () => addToCart(button.dataset.productId));
+  });
+
+  document.getElementById('openCartButton')?.addEventListener('click', openCart);
+  document.getElementById('closeCartButton')?.addEventListener('click', closeCart);
+  document.getElementById('cartBackdrop')?.addEventListener('click', closeCart);
+
+  document.querySelectorAll('[data-stock-watch]').forEach(element => {
+    element.addEventListener('change', updateAllProductStockUI);
+  });
+
+  document.getElementById('bombillonSimpleTipSelect')?.addEventListener('change', updateAllProductStockUI);
+  document.getElementById('bombillonPremiumShapeSelect')?.addEventListener('change', updateAllProductStockUI);
+
+  document.getElementById('checkoutForm')?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    if (cart.length === 0) {
+      alert('Tu carrito está vacío.');
+      return;
+    }
+
+    if (!validateCartAgainstStock()) {
+      updateAllProductStockUI();
+      return;
+    }
+
+    const checkoutButton = document.getElementById('checkoutWhatsappButton');
+    const formData = new FormData(event.currentTarget);
+    const order = buildOrderPayload(formData);
+    const message = buildWhatsappMessage(order);
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+    checkoutButton.disabled = true;
+    checkoutButton.dataset.originalText = checkoutButton.textContent;
+
+    try {
+      await saveOrderToGoogleSheets(order);
+    } catch (error) {
+      console.warn('No se pudo confirmar el guardado en Google Sheets:', error);
+    } finally {
+      checkoutButton.disabled = false;
+      window.open(whatsappUrl, '_blank', 'noopener');
     }
   });
 }
 
-checkoutForm?.addEventListener('submit', event => {
-  event.preventDefault();
-
-  if (cart.length === 0) {
-    openCart();
-    return;
-  }
-
-  if (!checkoutForm.checkValidity()) {
-    checkoutForm.reportValidity();
-    return;
-  }
-
-  const data = new FormData(checkoutForm);
-
-  const productLines = cart.map((item, index) => {
-    const options = Object.entries(item.options)
-      .map(([key, value]) => `${capitalize(key)}: ${value}`)
-      .join(', ');
-    return `${index + 1}. ${item.name} | ${options} | Cantidad: ${item.qty} | Subtotal: ${formatCurrency(item.price * item.qty)}`;
-  }).join('\n');
-
-  const productsForSheet = cart.map(item => item.name).join(' | ');
-  const quantitiesForSheet = cart.map(item => `${item.name}: ${item.qty}`).join(' | ');
-  const variantsForSheet = cart.map(item => {
-    const options = Object.entries(item.options)
-      .map(([key, value]) => `${capitalize(key)}: ${value}`)
-      .join(', ');
-    return `${item.name}: ${options}`;
-  }).join(' | ');
-
-  const sheetPayload = {
-    nombre: data.get('nombre') || '',
-    telefono: data.get('telefono') || '',
-    email: data.get('email') || '',
-    provincia: data.get('provincia') || '',
-    localidad: data.get('localidad') || '',
-    direccion: data.get('direccion') || '',
-    codigoPostal: data.get('codigoPostal') || '',
-    productos: productsForSheet,
-    cantidades: quantitiesForSheet,
-    variantes: variantsForSheet,
-    total: formatCurrency(getTotal()),
-    medioPago: 'Transferencia bancaria'
-  };
-
-  fetch(GOOGLE_SHEETS_WEB_APP_URL, {
-    method: 'POST',
-    mode: 'no-cors',
-    keepalive: true,
-    headers: {
-      'Content-Type': 'text/plain;charset=utf-8'
-    },
-    body: JSON.stringify(sheetPayload)
-  }).catch(error => {
-    console.warn('No se pudo registrar el pedido en Google Sheets:', error);
+function initScrollButtons() {
+  document.getElementById('scrollToProducts')?.addEventListener('click', () => {
+    document.getElementById('productos').scrollIntoView({ behavior: 'smooth' });
   });
-
-  const message = `Hola La Cebada, quiero finalizar esta compra:
-
-PRODUCTOS:
-${productLines}
-
-TOTAL ESTIMADO: ${formatCurrency(getTotal())}
-
-DATOS PARA ENVÍO:
-Nombre y apellido: ${data.get('nombre')}
-Teléfono: ${data.get('telefono')}
-Email: ${data.get('email')}
-Provincia: ${data.get('provincia')}
-Localidad: ${data.get('localidad')}
-Código postal: ${data.get('codigoPostal')}
-Dirección: ${data.get('direccion')}
-
-Medio de pago: Transferencia bancaria.
-Quedo atento/a para coordinar transferencia bancaria y envío por Correo Argentino.`;
-
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
-});
-
-function capitalize(text) {
-  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-document.getElementById('scrollToProducts')?.addEventListener('click', () => {
-  document.getElementById('productos').scrollIntoView({ behavior: 'smooth' });
-});
+document.addEventListener('DOMContentLoaded', () => {
+  initNavigation();
+  initProductGallery();
+  initCart();
+  initScrollButtons();
 
-const imageModal = document.getElementById('imageModal');
-const modalImage = document.getElementById('modalImage');
-const modalClose = document.getElementById('modalClose');
+  document.getElementById('year').textContent = new Date().getFullYear();
 
-document.querySelectorAll('.image-zoom').forEach(button => {
-  button.addEventListener('click', () => {
-    modalImage.src = button.dataset.full;
-    modalImage.alt = button.dataset.alt || 'Imagen ampliada';
-    imageModal.classList.add('open');
-    imageModal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('no-scroll');
+  renderCart();
+  updateAllProductStockUI();
+
+  loadStockFromGoogleSheets().catch(error => {
+    console.warn('Usando stock de respaldo porque no se pudo leer Google Sheets:', error);
+    updateAllProductStockUI();
   });
 });
-
-function closeModal() {
-  imageModal.classList.remove('open');
-  imageModal.setAttribute('aria-hidden', 'true');
-  modalImage.src = '';
-  document.body.classList.remove('no-scroll');
-}
-
-modalClose?.addEventListener('click', closeModal);
-imageModal?.addEventListener('click', event => {
-  if (event.target === imageModal) closeModal();
-});
-
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') {
-    closeModal();
-    closeCart();
-  }
-});
-
-document.getElementById('year').textContent = new Date().getFullYear();
-
-renderCart();
-updateStockUI();

@@ -1,22 +1,32 @@
 LA CEBADA - SITIO WEB
 
-Cambios incluidos:
-- Botón flotante inferior derecho reemplazado por botón circular verde de WhatsApp.
-- Ícono de carrito superior reemplazado por un SVG más profesional y elegante.
-- Carrito con formulario corto para datos de envío.
-- Finalización de compra por WhatsApp con productos + datos del cliente.
-- Stock oculto por variante.
-- Sección de preguntas frecuentes.
-- Sección de contacto con mail.
-- Foto de fundadores en “Quiénes somos”.
-- Banner superior con “Precios imperdibles por apertura”.
-- Estética más vintage/rústica.
+Contenido:
+- index.html
+- styles.css
+- script.js
+- favicon.png / favicon.ico
+- carpeta assets con fotos y logo
 
-IMPORTANTE:
-El control de stock de esta versión es del lado del navegador, es decir, sirve para limitar el carrito de esta web estática, pero no descuenta stock real automáticamente entre distintos compradores. Para stock 100% real se necesita backend, base de datos o una plataforma ecommerce.
+Qué incluye:
+- Diseño rústico artesanal y responsive
+- Catálogo con imágenes reales de productos
+- Carrito de compras del lado del cliente
+- Botón final de WhatsApp para coordinar pago y envío
+- Quiénes somos
+- Por qué elegirnos
+- Envíos a todo el país por Correo Argentino
+- Favicon con el logo de la marca
+
+Siguientes mejoras recomendadas:
+- Fotos homogéneas por variante (mismo ángulo y fondo)
+- FAQ, medios de pago y políticas
+- Sección de reseñas reales
+- Fotos adicionales para futuros productos
 
 
-Integración de ventas:
-- La web envía cada pedido a Google Sheets mediante Apps Script.
-- URL configurada: https://script.google.com/macros/s/AKfycbysoYTLNiyI71_FAz7wxOZtyYDIWDtRSGgDeb7Hx6cyaKEb-N5fzgivaQZEoC61TnV5/exec
-- Al finalizar compra, también se abre WhatsApp con el pedido completo.
+ACTUALIZACIÓN STOCK GOOGLE SHEETS
+- La web ahora lee el stock desde la pestaña STOCK de Google Sheets usando Apps Script.
+- El stock exacto permanece oculto para el cliente.
+- Si una variante tiene STOCK 0 o ACTIVO NO, la web muestra "Sin stock" y bloquea la compra.
+- El stock NO se descuenta automáticamente al recibir un pedido. Se controla manualmente desde Google Sheets.
+- Las ventas se registran en la pestaña VENTAS.
