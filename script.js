@@ -1,4 +1,5 @@
 const WHATSAPP_NUMBER = '541150373123';
+const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbysoYTLNiyI71_FAz7wxOZtyYDIWDtRSGgDeb7Hx6cyaKEb-N5fzgivaQZEoC61TnV5/exec';
 
 const baseStock = {
   'torpedo-joyero|color:Suela': 2,
@@ -334,28 +335,67 @@ checkoutForm?.addEventListener('submit', event => {
   }
 
   const data = new FormData(checkoutForm);
-  const lines = cart.map((item, index) => {
+
+  const productLines = cart.map((item, index) => {
     const options = Object.entries(item.options)
       .map(([key, value]) => `${capitalize(key)}: ${value}`)
       .join(', ');
     return `${index + 1}. ${item.name} | ${options} | Cantidad: ${item.qty} | Subtotal: ${formatCurrency(item.price * item.qty)}`;
   }).join('\n');
 
+  const productsForSheet = cart.map(item => item.name).join(' | ');
+  const quantitiesForSheet = cart.map(item => `${item.name}: ${item.qty}`).join(' | ');
+  const variantsForSheet = cart.map(item => {
+    const options = Object.entries(item.options)
+      .map(([key, value]) => `${capitalize(key)}: ${value}`)
+      .join(', ');
+    return `${item.name}: ${options}`;
+  }).join(' | ');
+
+  const sheetPayload = {
+    nombre: data.get('nombre') || '',
+    telefono: data.get('telefono') || '',
+    email: data.get('email') || '',
+    provincia: data.get('provincia') || '',
+    localidad: data.get('localidad') || '',
+    direccion: data.get('direccion') || '',
+    codigoPostal: data.get('codigoPostal') || '',
+    productos: productsForSheet,
+    cantidades: quantitiesForSheet,
+    variantes: variantsForSheet,
+    total: formatCurrency(getTotal()),
+    medioPago: 'Transferencia bancaria'
+  };
+
+  fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    keepalive: true,
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
+    body: JSON.stringify(sheetPayload)
+  }).catch(error => {
+    console.warn('No se pudo registrar el pedido en Google Sheets:', error);
+  });
+
   const message = `Hola La Cebada, quiero finalizar esta compra:
 
 PRODUCTOS:
-${lines}
+${productLines}
 
 TOTAL ESTIMADO: ${formatCurrency(getTotal())}
 
 DATOS PARA ENVÍO:
 Nombre y apellido: ${data.get('nombre')}
 Teléfono: ${data.get('telefono')}
+Email: ${data.get('email')}
 Provincia: ${data.get('provincia')}
 Localidad: ${data.get('localidad')}
 Código postal: ${data.get('codigoPostal')}
 Dirección: ${data.get('direccion')}
 
+Medio de pago: Transferencia bancaria.
 Quedo atento/a para coordinar transferencia bancaria y envío por Correo Argentino.`;
 
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank', 'noopener');

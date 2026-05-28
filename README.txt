@@ -14,3 +14,9 @@ Cambios incluidos:
 
 IMPORTANTE:
 El control de stock de esta versión es del lado del navegador, es decir, sirve para limitar el carrito de esta web estática, pero no descuenta stock real automáticamente entre distintos compradores. Para stock 100% real se necesita backend, base de datos o una plataforma ecommerce.
+
+
+Integración de ventas:
+- La web envía cada pedido a Google Sheets mediante Apps Script.
+- URL configurada: https://script.google.com/macros/s/AKfycbysoYTLNiyI71_FAz7wxOZtyYDIWDtRSGgDeb7Hx6cyaKEb-N5fzgivaQZEoC61TnV5/exec
+- Al finalizar compra, también se abre WhatsApp con el pedido completo.
