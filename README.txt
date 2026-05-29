@@ -23,3 +23,10 @@ Notas:
 - Las columnas ESTADO DEL PEDIDO y OBSERVACIONES quedan vacías para control manual.
 - Para cambios de stock, solo modificá Google Sheets. No hace falta pasar por GitHub/Vercel.
 - Para cambios de diseño, textos, fotos o productos nuevos, sí hay que actualizar GitHub/Vercel.
+
+
+ACTUALIZACIÓN PRECIOS DESDE GOOGLE SHEETS
+- La pestaña STOCK ahora puede incluir la columna PRECIO.
+- La web usa PRECIO para mostrar precios, calcular carrito, total, WhatsApp y registro de ventas.
+- Escribir precios como números, sin $ ni puntos. Ejemplo: 60000.
+- Para cambiar precios, solo editar Google Sheets y recargar la web.

@@ -2,14 +2,14 @@ const WHATSAPP_NUMBER = '541150373123';
 const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbysoYTLNiyI71_FAz7wxOZtyYDIWDtRSGgDeb7Hx6cyaKEb-N5fzgivaQZEoC61TnV5/exec';
 
 const fallbackStock = {
-  'torpedo-suela': { stock: 2, activo: true },
-  'torpedo-borravino': { stock: 1, activo: true },
-  'torpedo-chocolate': { stock: 1, activo: true },
-  'torpedo-negro': { stock: 1, activo: true },
-  'bombillon-anilla-simple-curvo-bronce': { stock: 2, activo: true },
-  'bombillon-anilla-simple-recto-bronce': { stock: 2, activo: true },
-  'bombillon-cincelado-premium-ancho-curvo-bronce': { stock: 2, activo: true },
-  'bombillon-cincelado-premium-ancho-curvo-alpaca': { stock: 1, activo: true },
+  'torpedo-suela': { stock: 2, activo: true, precio: 60000 },
+  'torpedo-borravino': { stock: 1, activo: true, precio: 60000 },
+  'torpedo-chocolate': { stock: 1, activo: true, precio: 60000 },
+  'torpedo-negro': { stock: 1, activo: true, precio: 60000 },
+  'bombillon-anilla-simple-curvo-bronce': { stock: 2, activo: true, precio: 30000 },
+  'bombillon-anilla-simple-recto-bronce': { stock: 2, activo: true, precio: 30000 },
+  'bombillon-cincelado-premium-ancho-curvo-bronce': { stock: 2, activo: true, precio: 32000 },
+  'bombillon-cincelado-premium-ancho-curvo-alpaca': { stock: 1, activo: true, precio: 32000 },
 };
 
 let stockBySku = { ...fallbackStock };
@@ -90,6 +90,36 @@ function getStockForSku(sku) {
   return Math.max(0, Number(item.stock || 0));
 }
 
+
+function getPriceForSku(sku, fallbackPrice) {
+  const item = stockBySku[sku];
+  const price = Number(item && item.precio);
+
+  if (Number.isFinite(price) && price > 0) {
+    return price;
+  }
+
+  return fallbackPrice;
+}
+
+function updateProductPriceUI(productId) {
+  const product = products[productId];
+  const options = product.getOptions();
+  const sku = product.getSku(options);
+  const price = getPriceForSku(sku, product.price);
+
+  const priceElementMap = {
+    'torpedo-joyero': ['matePrice', 'heroProductPrice'],
+    'bombillon-simple': ['bombillonSimplePrice'],
+    'bombillon-premium': ['bombillonPremiumPrice'],
+  };
+
+  (priceElementMap[productId] || []).forEach(id => {
+    const element = document.getElementById(id);
+    if (element) element.textContent = formatCurrency(price);
+  });
+}
+
 function getReservedQtyForSku(sku) {
   return cart.filter(item => item.sku === sku).reduce((acc, item) => acc + item.qty, 0);
 }
@@ -136,7 +166,10 @@ function updateProductStockUI(productId) {
 }
 
 function updateAllProductStockUI() {
-  Object.keys(products).forEach(updateProductStockUI);
+  Object.keys(products).forEach(productId => {
+    updateProductPriceUI(productId);
+    updateProductStockUI(productId);
+  });
 }
 
 function addToCart(productId) {
@@ -144,6 +177,7 @@ function addToCart(productId) {
   const options = product.getOptions();
   const sku = product.getSku(options);
   const requestedQty = Math.max(1, product.getQty());
+  const unitPrice = getPriceForSku(sku, product.price);
   const stock = getStockForSku(sku);
   const reserved = getReservedQtyForSku(sku);
   const remaining = Math.max(0, stock - reserved);
@@ -165,7 +199,7 @@ function addToCart(productId) {
   if (existing) {
     existing.qty += requestedQty;
   } else {
-    cart.push({ key: sku, sku, productId, name: product.name, price: product.price, options, qty: requestedQty });
+    cart.push({ key: sku, sku, productId, name: product.name, price: unitPrice, options, qty: requestedQty });
   }
 
   renderCart();
@@ -341,12 +375,21 @@ function syncCartWithUpdatedStock() {
         return null;
       }
 
-      if (item.qty > stock) {
+      const product = products[item.productId];
+      const updatedPrice = getPriceForSku(item.sku, product.price);
+      let updatedItem = item;
+
+      if (item.price !== updatedPrice) {
         changed = true;
-        return { ...item, qty: stock };
+        updatedItem = { ...updatedItem, price: updatedPrice };
       }
 
-      return item;
+      if (updatedItem.qty > stock) {
+        changed = true;
+        return { ...updatedItem, qty: stock };
+      }
+
+      return updatedItem;
     })
     .filter(Boolean);
 
@@ -385,6 +428,7 @@ function loadStockFromGoogleSheets() {
         nextStock[item.sku] = {
           stock: Number(item.stock || 0),
           activo: item.activo !== false,
+          precio: Number(item.precio || item.price || 0),
         };
       });
 
