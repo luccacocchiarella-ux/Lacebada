@@ -14,48 +14,87 @@ const fallbackStock = {
 
 let stockBySku = { ...fallbackStock };
 let cart = [];
+let activeCatalogFilter = 'all';
 
 const products = {
   'torpedo-joyero': {
     name: 'Torpedo cincelado joyero',
+    categoryLabel: 'Mate · Torpedo',
     price: 60000,
+    skus: ['torpedo-suela', 'torpedo-borravino', 'torpedo-chocolate', 'torpedo-negro'],
     qtyInputId: 'mateQty',
     buttonSelector: '[data-product-id="torpedo-joyero"]',
     stockMessageId: 'mateStockMessage',
-    getOptions: () => ({ color: document.getElementById('mateColorSelect').value }),
-    getQty: () => Number(document.getElementById('mateQty').value || 1),
+    detailPriceIds: ['matePrice', 'heroProductPrice'],
+    catalogPriceId: 'catalogPriceTorpedo',
+    cardStockSelector: '[data-card-stock="torpedo-joyero"]',
+    getOptions: () => ({ color: document.getElementById('mateColorSelect')?.value || 'Suela' }),
+    getQty: () => Number(document.getElementById('mateQty')?.value || 1),
     getSku: (options) => ({
       Suela: 'torpedo-suela',
       Borravino: 'torpedo-borravino',
       Chocolate: 'torpedo-chocolate',
       Negro: 'torpedo-negro',
-    }[options.color]),
+    }[options.color] || 'torpedo-suela'),
   },
   'bombillon-simple': {
     name: 'Bombillón anilla simple',
+    categoryLabel: 'Bombillón',
     price: 30000,
+    skus: ['bombillon-anilla-simple-curvo-bronce', 'bombillon-anilla-simple-recto-bronce'],
     qtyInputId: 'bombillonSimpleQty',
     buttonSelector: '[data-product-id="bombillon-simple"]',
     stockMessageId: 'bombillonSimpleStockMessage',
+    detailPriceIds: ['bombillonSimplePrice'],
+    catalogPriceId: 'catalogPriceBombillonSimple',
+    cardStockSelector: '[data-card-stock="bombillon-simple"]',
     getOptions: () => ({
-      formato: document.getElementById('bombillonSimpleShapeSelect').value,
-      pico: document.getElementById('bombillonSimpleTipSelect').value,
+      formato: document.getElementById('bombillonSimpleShapeSelect')?.value || 'Curvo',
+      pico: document.getElementById('bombillonSimpleTipSelect')?.value || 'Bronce',
     }),
-    getQty: () => Number(document.getElementById('bombillonSimpleQty').value || 1),
+    getQty: () => Number(document.getElementById('bombillonSimpleQty')?.value || 1),
     getSku: (options) => `bombillon-anilla-simple-${normalizeSlug(options.formato)}-${normalizeSlug(options.pico)}`,
   },
   'bombillon-premium': {
     name: 'Bombillón cincelado premium ancho',
+    categoryLabel: 'Bombillón premium',
     price: 32000,
+    skus: ['bombillon-cincelado-premium-ancho-curvo-bronce', 'bombillon-cincelado-premium-ancho-curvo-alpaca'],
     qtyInputId: 'bombillonPremiumQty',
     buttonSelector: '[data-product-id="bombillon-premium"]',
     stockMessageId: 'bombillonPremiumStockMessage',
+    detailPriceIds: ['bombillonPremiumPrice'],
+    catalogPriceId: 'catalogPriceBombillonPremium',
+    cardStockSelector: '[data-card-stock="bombillon-premium"]',
     getOptions: () => ({
-      formato: document.getElementById('bombillonPremiumShapeSelect').value,
-      pico: document.getElementById('bombillonPremiumTipSelect').value,
+      formato: document.getElementById('bombillonPremiumShapeSelect')?.value || 'Curvo',
+      pico: document.getElementById('bombillonPremiumTipSelect')?.value || 'Bronce',
     }),
-    getQty: () => Number(document.getElementById('bombillonPremiumQty').value || 1),
+    getQty: () => Number(document.getElementById('bombillonPremiumQty')?.value || 1),
     getSku: (options) => `bombillon-cincelado-premium-ancho-${normalizeSlug(options.formato)}-${normalizeSlug(options.pico)}`,
+  }
+};
+
+const catalogCopy = {
+  all: {
+    title: 'Todos los productos',
+    subtitle: 'Explorá nuestra selección de mates y bombillones. Elegí una categoría o abrí un producto para ver detalles, variantes y agregarlo al carrito.',
+    breadcrumb: 'Inicio · Catálogo'
+  },
+  mates: {
+    title: 'Mates',
+    subtitle: 'Todos los mates disponibles en La Cebada.',
+    breadcrumb: 'Inicio · Catálogo · Mates'
+  },
+  torpedos: {
+    title: 'Torpedos',
+    subtitle: 'Mates torpedo de primera calidad, con estilo clásico y presencia artesanal.',
+    breadcrumb: 'Inicio · Mates · Torpedos'
+  },
+  bombillones: {
+    title: 'Bombillones',
+    subtitle: 'Bombillones seleccionados para acompañar tu ritual matero.',
+    breadcrumb: 'Inicio · Catálogo · Bombillones'
   }
 };
 
@@ -69,7 +108,11 @@ function normalizeSlug(value) {
 }
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(value);
+  return new Intl.NumberFormat('es-AR', {
+    style: 'currency',
+    currency: 'ARS',
+    maximumFractionDigits: 0
+  }).format(value);
 }
 
 function capitalize(text) {
@@ -85,11 +128,12 @@ function optionText(options) {
 function getStockForSku(sku) {
   const item = stockBySku[sku];
 
-  if (!item || item.activo === false) return 0;
+  if (!item || item.activo === false) {
+    return 0;
+  }
 
   return Math.max(0, Number(item.stock || 0));
 }
-
 
 function getPriceForSku(sku, fallbackPrice) {
   const item = stockBySku[sku];
@@ -102,26 +146,16 @@ function getPriceForSku(sku, fallbackPrice) {
   return fallbackPrice;
 }
 
-function updateProductPriceUI(productId) {
+function getProductCatalogPrice(productId) {
   const product = products[productId];
-  const options = product.getOptions();
-  const sku = product.getSku(options);
-  const price = getPriceForSku(sku, product.price);
-
-  const priceElementMap = {
-    'torpedo-joyero': ['matePrice', 'heroProductPrice'],
-    'bombillon-simple': ['bombillonSimplePrice'],
-    'bombillon-premium': ['bombillonPremiumPrice'],
-  };
-
-  (priceElementMap[productId] || []).forEach(id => {
-    const element = document.getElementById(id);
-    if (element) element.textContent = formatCurrency(price);
-  });
+  const availableSku = product.skus.find(sku => getStockForSku(sku) > 0) || product.skus[0];
+  return getPriceForSku(availableSku, product.price);
 }
 
 function getReservedQtyForSku(sku) {
-  return cart.filter(item => item.sku === sku).reduce((acc, item) => acc + item.qty, 0);
+  return cart
+    .filter(item => item.sku === sku)
+    .reduce((acc, item) => acc + item.qty, 0);
 }
 
 function getRemainingStock(productId) {
@@ -131,7 +165,33 @@ function getRemainingStock(productId) {
   const stock = getStockForSku(sku);
   const reserved = getReservedQtyForSku(sku);
 
-  return { sku, stock, reserved, remaining: Math.max(0, stock - reserved) };
+  return {
+    sku,
+    stock,
+    reserved,
+    remaining: Math.max(0, stock - reserved),
+  };
+}
+
+function isProductAvailable(productId) {
+  const product = products[productId];
+  return product.skus.some(sku => getStockForSku(sku) > 0);
+}
+
+function updateProductPriceUI(productId) {
+  const product = products[productId];
+  const options = product.getOptions();
+  const selectedSku = product.getSku(options);
+  const selectedPrice = getPriceForSku(selectedSku, product.price);
+  const catalogPrice = getProductCatalogPrice(productId);
+
+  product.detailPriceIds.forEach(id => {
+    const element = document.getElementById(id);
+    if (element) element.textContent = formatCurrency(selectedPrice);
+  });
+
+  const catalogPriceElement = document.getElementById(product.catalogPriceId);
+  if (catalogPriceElement) catalogPriceElement.textContent = formatCurrency(catalogPrice);
 }
 
 function updateProductStockUI(productId) {
@@ -141,27 +201,40 @@ function updateProductStockUI(productId) {
   const message = document.getElementById(product.stockMessageId);
   const stockInfo = getRemainingStock(productId);
 
-  if (!qtyInput || !button || !message) return;
+  if (qtyInput && button && message) {
+    qtyInput.max = Math.max(1, stockInfo.remaining);
 
-  if (stockInfo.remaining <= 0) {
-    qtyInput.value = 1;
-    qtyInput.disabled = true;
-    button.disabled = true;
-    button.classList.add('disabled');
-    message.textContent = 'Sin stock';
-    message.classList.add('out-of-stock');
-    return;
+    if (stockInfo.remaining <= 0) {
+      qtyInput.value = 1;
+      qtyInput.disabled = true;
+      button.disabled = true;
+      button.classList.add('disabled');
+      message.textContent = 'Sin stock';
+      message.classList.add('out-of-stock');
+    } else {
+      qtyInput.disabled = false;
+      button.disabled = false;
+      button.classList.remove('disabled');
+      message.textContent = 'Disponible';
+      message.classList.remove('out-of-stock');
+
+      if (Number(qtyInput.value || 1) > stockInfo.remaining) {
+        qtyInput.value = stockInfo.remaining;
+      }
+    }
   }
 
-  qtyInput.disabled = false;
-  button.disabled = false;
-  button.classList.remove('disabled');
-  qtyInput.max = stockInfo.remaining;
-  message.textContent = 'Disponible';
-  message.classList.remove('out-of-stock');
+  const card = document.querySelector(`[data-catalog-card][data-product-id="${productId}"]`);
+  const ribbon = document.querySelector(product.cardStockSelector);
+  const available = isProductAvailable(productId);
 
-  if (Number(qtyInput.value || 1) > stockInfo.remaining) {
-    qtyInput.value = stockInfo.remaining;
+  if (card) {
+    card.classList.toggle('is-out-of-stock', !available);
+  }
+
+  if (ribbon) {
+    ribbon.textContent = available ? '' : 'Sin stock';
+    ribbon.hidden = available;
   }
 }
 
@@ -198,8 +271,17 @@ function addToCart(productId) {
 
   if (existing) {
     existing.qty += requestedQty;
+    existing.price = unitPrice;
   } else {
-    cart.push({ key: sku, sku, productId, name: product.name, price: unitPrice, options, qty: requestedQty });
+    cart.push({
+      key: sku,
+      sku,
+      productId,
+      name: product.name,
+      price: unitPrice,
+      options,
+      qty: requestedQty,
+    });
   }
 
   renderCart();
@@ -290,6 +372,7 @@ function renderCart() {
   });
 
   const itemCount = cart.reduce((acc, item) => acc + item.qty, 0);
+
   cartTotal.textContent = formatCurrency(getTotal());
   cartCount.textContent = itemCount;
   if (checkoutButton) checkoutButton.disabled = cart.length === 0;
@@ -358,7 +441,9 @@ async function saveOrderToGoogleSheets(order) {
   await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
     method: 'POST',
     mode: 'no-cors',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8',
+    },
     body: JSON.stringify(order),
   });
 }
@@ -393,14 +478,17 @@ function syncCartWithUpdatedStock() {
     })
     .filter(Boolean);
 
-  if (changed) renderCart();
+  if (changed) {
+    renderCart();
+  }
+
   updateAllProductStockUI();
 }
 
 function loadStockFromGoogleSheets() {
   return new Promise((resolve, reject) => {
     const callbackName = `stockCallback_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
-    const script = document.createElement('script');
+    const jsonpScript = document.createElement('script');
     const timeout = window.setTimeout(() => {
       cleanup();
       reject(new Error('Timeout al cargar stock'));
@@ -409,7 +497,7 @@ function loadStockFromGoogleSheets() {
     function cleanup() {
       window.clearTimeout(timeout);
       delete window[callbackName];
-      script.remove();
+      jsonpScript.remove();
     }
 
     window[callbackName] = (response) => {
@@ -432,19 +520,23 @@ function loadStockFromGoogleSheets() {
         };
       });
 
-      stockBySku = { ...fallbackStock, ...nextStock };
+      stockBySku = {
+        ...fallbackStock,
+        ...nextStock,
+      };
+
       syncCartWithUpdatedStock();
       resolve(stockBySku);
     };
 
-    script.onerror = () => {
+    jsonpScript.onerror = () => {
       cleanup();
       reject(new Error('No se pudo cargar stock'));
     };
 
     const separator = GOOGLE_SHEETS_WEB_APP_URL.includes('?') ? '&' : '?';
-    script.src = `${GOOGLE_SHEETS_WEB_APP_URL}${separator}callback=${callbackName}&_=${Date.now()}`;
-    document.body.appendChild(script);
+    jsonpScript.src = `${GOOGLE_SHEETS_WEB_APP_URL}${separator}callback=${callbackName}&_=${Date.now()}`;
+    document.body.appendChild(jsonpScript);
   });
 }
 
@@ -468,6 +560,81 @@ function closeCart() {
   document.body.classList.remove('no-scroll');
 }
 
+function showCatalog(filter = 'all', shouldScroll = true) {
+  activeCatalogFilter = filter;
+  const listView = document.getElementById('catalogListView');
+  const detailView = document.getElementById('catalogDetailView');
+  const title = document.getElementById('catalogTitle');
+  const subtitle = document.getElementById('catalogSubtitle');
+  const breadcrumb = document.getElementById('catalogBreadcrumb');
+  const copy = catalogCopy[filter] || catalogCopy.all;
+
+  if (detailView) detailView.hidden = true;
+  if (listView) listView.hidden = false;
+
+  document.querySelectorAll('[data-detail-panel]').forEach(panel => {
+    panel.hidden = true;
+  });
+
+  if (title) title.textContent = copy.title;
+  if (subtitle) subtitle.textContent = copy.subtitle;
+  if (breadcrumb) breadcrumb.textContent = copy.breadcrumb;
+
+  document.querySelectorAll('[data-catalog-card]').forEach(card => {
+    const categories = card.dataset.categories || '';
+    const visible = filter === 'all' || categories.includes(filter);
+    card.hidden = !visible;
+  });
+
+  document.querySelectorAll('[data-catalog-filter]').forEach(button => {
+    button.classList.toggle('active', button.dataset.catalogFilter === filter);
+  });
+
+  updateAllProductStockUI();
+
+  if (shouldScroll) {
+    document.getElementById('productos')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+function showProductDetail(productId) {
+  const listView = document.getElementById('catalogListView');
+  const detailView = document.getElementById('catalogDetailView');
+
+  if (listView) listView.hidden = true;
+  if (detailView) detailView.hidden = false;
+
+  document.querySelectorAll('[data-detail-panel]').forEach(panel => {
+    panel.hidden = panel.dataset.detailPanel !== productId;
+  });
+
+  updateAllProductStockUI();
+
+  document.getElementById('productos')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function initCatalog() {
+  document.querySelectorAll('[data-catalog-filter]').forEach(button => {
+    button.addEventListener('click', () => {
+      showCatalog(button.dataset.catalogFilter || 'all');
+      const navLinks = document.querySelector('.nav-links');
+      const navToggle = document.querySelector('.nav-toggle');
+      navLinks?.classList.remove('open');
+      navToggle?.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  document.querySelectorAll('[data-open-product]').forEach(button => {
+    button.addEventListener('click', () => {
+      showProductDetail(button.dataset.openProduct);
+    });
+  });
+
+  document.getElementById('backToCatalogButton')?.addEventListener('click', () => {
+    showCatalog(activeCatalogFilter);
+  });
+}
+
 function initNavigation() {
   const navToggle = document.querySelector('.nav-toggle');
   const navLinks = document.querySelector('.nav-links');
@@ -486,32 +653,48 @@ function initNavigation() {
 }
 
 function initProductGallery() {
-  const mateThumbButtons = document.querySelectorAll('#mateThumbs .thumb');
-  const mateMainImage = document.getElementById('mateMainImage');
-  const mateColorSelect = document.getElementById('mateColorSelect');
-  const mainZoomButton = document.querySelector('.gallery-main-button');
-
-  mateThumbButtons.forEach((button, index) => {
+  document.querySelectorAll('[data-detail-thumb]').forEach(button => {
     button.addEventListener('click', () => {
-      mateThumbButtons.forEach(btn => btn.classList.remove('active'));
+      const gallery = button.closest('.detail-gallery');
+      const image = button.dataset.image;
+      const colorName = button.dataset.colorName;
+
+      gallery.querySelectorAll('[data-detail-thumb]').forEach(item => item.classList.remove('active'));
       button.classList.add('active');
 
-      mateMainImage.src = button.dataset.image;
-      mateMainImage.alt = `Mate Torpedo cincelado joyero color ${button.dataset.colorName}`;
+      const mainImage = gallery.querySelector('.detail-main-image');
+      const zoomButton = gallery.querySelector('.detail-main-image-button');
 
-      if (mainZoomButton) {
-        mainZoomButton.dataset.full = button.dataset.image;
-        mainZoomButton.dataset.alt = `Mate Torpedo cincelado joyero color ${button.dataset.colorName}`;
+      if (mainImage) {
+        mainImage.src = image;
+        if (colorName) mainImage.alt = `Mate Torpedo cincelado joyero color ${colorName}`;
       }
 
-      mateColorSelect.selectedIndex = index;
-      updateProductStockUI('torpedo-joyero');
+      if (zoomButton) {
+        zoomButton.dataset.full = image;
+        if (colorName) zoomButton.dataset.alt = `Mate Torpedo cincelado joyero color ${colorName}`;
+      }
+
+      const mateColorSelect = document.getElementById('mateColorSelect');
+      if (colorName && mateColorSelect) {
+        mateColorSelect.value = colorName;
+        updateProductStockUI('torpedo-joyero');
+        updateProductPriceUI('torpedo-joyero');
+      }
     });
   });
 
-  mateColorSelect?.addEventListener('change', () => {
-    const selected = [...mateThumbButtons].find(btn => btn.dataset.colorName.toLowerCase() === mateColorSelect.value.toLowerCase());
-    if (selected) selected.click();
+  document.getElementById('mateColorSelect')?.addEventListener('change', () => {
+    const color = document.getElementById('mateColorSelect').value;
+    const selectedThumb = [...document.querySelectorAll('#mateThumbs [data-detail-thumb]')]
+      .find(button => button.dataset.colorName === color);
+
+    if (selectedThumb) {
+      selectedThumb.click();
+    } else {
+      updateProductStockUI('torpedo-joyero');
+      updateProductPriceUI('torpedo-joyero');
+    }
   });
 
   document.querySelectorAll('.image-zoom').forEach(button => {
@@ -591,12 +774,13 @@ function initCart() {
 
 function initScrollButtons() {
   document.getElementById('scrollToProducts')?.addEventListener('click', () => {
-    document.getElementById('productos').scrollIntoView({ behavior: 'smooth' });
+    showCatalog('all');
   });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
+  initCatalog();
   initProductGallery();
   initCart();
   initScrollButtons();
@@ -604,6 +788,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('year').textContent = new Date().getFullYear();
 
   renderCart();
+  showCatalog('all', false);
   updateAllProductStockUI();
 
   loadStockFromGoogleSheets().catch(error => {

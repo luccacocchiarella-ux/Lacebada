@@ -25,8 +25,11 @@ Notas:
 - Para cambios de diseño, textos, fotos o productos nuevos, sí hay que actualizar GitHub/Vercel.
 
 
-ACTUALIZACIÓN PRECIOS DESDE GOOGLE SHEETS
-- La pestaña STOCK ahora puede incluir la columna PRECIO.
-- La web usa PRECIO para mostrar precios, calcular carrito, total, WhatsApp y registro de ventas.
-- Escribir precios como números, sin $ ni puntos. Ejemplo: 60000.
-- Para cambiar precios, solo editar Google Sheets y recargar la web.
+ACTUALIZACIÓN CATÁLOGO
+- El menú superior ahora muestra "Catálogo" con desplegable por categorías.
+- Click en Catálogo: muestra todos los productos.
+- Click en MATES: muestra los mates.
+- Click en Torpedos: muestra solo los torpedos.
+- Click en BOMBILLONES: muestra todos los bombillones.
+- Cada producto abre una vista de detalle con galería, variantes, cantidad y botón para agregar al carrito.
+- Se mantuvieron carrito, formulario, WhatsApp, ventas en Google Sheets, stock y precios desde Google Sheets.
