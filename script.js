@@ -95,6 +95,11 @@ const catalogCopy = {
     title: 'Bombillones',
     subtitle: 'Bombillones seleccionados para acompañar tu ritual matero.',
     breadcrumb: 'Inicio · Catálogo · Bombillones'
+  },
+  materas: {
+    title: 'Materas',
+    subtitle: 'Materas para llevar tu mate a todos lados.',
+    breadcrumb: 'Inicio · Catálogo · Materas'
   }
 };
 
@@ -580,10 +585,30 @@ function showCatalog(filter = 'all', shouldScroll = true) {
   if (subtitle) subtitle.textContent = copy.subtitle;
   if (breadcrumb) breadcrumb.textContent = copy.breadcrumb;
 
-  document.querySelectorAll('[data-catalog-card]').forEach(card => {
-    const categories = card.dataset.categories || '';
-    const visible = filter === 'all' || categories.includes(filter);
-    card.hidden = !visible;
+  // Cada filtro apunta a una categoría principal del catálogo.
+  const filterToCategory = {
+    mates: 'mates',
+    torpedos: 'mates',
+    bombillones: 'bombillones',
+    materas: 'materas',
+  };
+  const targetCategory = filterToCategory[filter];
+
+  document.querySelectorAll('.catalog-category').forEach(section => {
+    const visible = filter === 'all' || section.dataset.category === targetCategory;
+    section.hidden = !visible;
+  });
+
+  // "Torpedos" es un tipo dentro de la Sección Premium: al filtrarlo,
+  // mostramos solo ese grupo y ocultamos las sub-secciones que no lo contienen.
+  const onlyType = filter === 'torpedos' ? 'torpedos' : null;
+
+  document.querySelectorAll('.catalog-subsection').forEach(sub => {
+    sub.hidden = onlyType ? !sub.querySelector(`.catalog-type-group[data-type="${onlyType}"]`) : false;
+  });
+
+  document.querySelectorAll('.catalog-type-group').forEach(group => {
+    group.hidden = onlyType ? group.dataset.type !== onlyType : false;
   });
 
   document.querySelectorAll('[data-catalog-filter]').forEach(button => {
