@@ -10,6 +10,15 @@ const fallbackStock = {
   'bombillon-anilla-simple-recto-bronce': { stock: 2, activo: true, precio: 30000 },
   'bombillon-cincelado-premium-ancho-curvo-bronce': { stock: 2, activo: true, precio: 32000 },
   'bombillon-cincelado-premium-ancho-curvo-alpaca': { stock: 1, activo: true, precio: 32000 },
+  'torpedo-roma-negro': { stock: 1, activo: true, precio: 50000 },
+  'torpedo-roma-borravino': { stock: 1, activo: true, precio: 50000 },
+  'mate-criollito': { stock: 2, activo: true, precio: 15000 },
+  'mate-coquito': { stock: 2, activo: true, precio: 28000 },
+  'mate-imperial-cuero-crudo': { stock: 1, activo: true, precio: 45000 },
+  'mate-imperial-liso': { stock: 1, activo: true, precio: 35000 },
+  'matera-uruguaya': { stock: 2, activo: true, precio: 25000 },
+  'bombillon-cincelado-colonial': { stock: 2, activo: true, precio: 25000 },
+  'bombillon-cincelado-el-noble': { stock: 2, activo: true, precio: 25000 },
 };
 
 let stockBySku = { ...fallbackStock };
@@ -72,6 +81,129 @@ const products = {
     }),
     getQty: () => Number(document.getElementById('bombillonPremiumQty')?.value || 1),
     getSku: (options) => `bombillon-cincelado-premium-ancho-${normalizeSlug(options.formato)}-${normalizeSlug(options.pico)}`,
+  },
+  'torpedo-roma': {
+    name: 'Mate Torpedo Roma',
+    categoryLabel: 'Mate · Torpedo',
+    price: 50000,
+    skus: ['torpedo-roma-negro', 'torpedo-roma-borravino'],
+    qtyInputId: 'torpedoRomaQty',
+    buttonSelector: '[data-product-id="torpedo-roma"]',
+    stockMessageId: 'torpedoRomaStockMessage',
+    detailPriceIds: ['torpedoRomaPrice'],
+    catalogPriceId: 'catalogPriceTorpedoRoma',
+    cardStockSelector: '[data-card-stock="torpedo-roma"]',
+    getOptions: () => ({ color: document.getElementById('torpedoRomaColorSelect')?.value || 'Negro' }),
+    getQty: () => Number(document.getElementById('torpedoRomaQty')?.value || 1),
+    getSku: (options) => ({
+      Negro: 'torpedo-roma-negro',
+      Borravino: 'torpedo-roma-borravino',
+    }[options.color] || 'torpedo-roma-negro'),
+  },
+  'mate-criollito': {
+    name: 'Mate Criollito',
+    categoryLabel: 'Mate · Camionero',
+    price: 15000,
+    skus: ['mate-criollito'],
+    qtyInputId: 'mateCriollitoQty',
+    buttonSelector: '[data-product-id="mate-criollito"]',
+    stockMessageId: 'mateCriollitoStockMessage',
+    detailPriceIds: ['mateCriollitoPrice'],
+    catalogPriceId: 'catalogPriceMateCriollito',
+    cardStockSelector: '[data-card-stock="mate-criollito"]',
+    getOptions: () => ({}),
+    getQty: () => Number(document.getElementById('mateCriollitoQty')?.value || 1),
+    getSku: () => 'mate-criollito',
+  },
+  'mate-coquito': {
+    name: 'Mate Coquito',
+    categoryLabel: 'Mate · Camionero',
+    price: 28000,
+    skus: ['mate-coquito'],
+    qtyInputId: 'mateCoquitoQty',
+    buttonSelector: '[data-product-id="mate-coquito"]',
+    stockMessageId: 'mateCoquitoStockMessage',
+    detailPriceIds: ['mateCoquitoPrice'],
+    catalogPriceId: 'catalogPriceMateCoquito',
+    cardStockSelector: '[data-card-stock="mate-coquito"]',
+    getOptions: () => ({}),
+    getQty: () => Number(document.getElementById('mateCoquitoQty')?.value || 1),
+    getSku: () => 'mate-coquito',
+  },
+  'mate-imperial-cuero-crudo': {
+    name: 'Mate Imperial Cuero Crudo',
+    categoryLabel: 'Mate · Imperial',
+    price: 45000,
+    skus: ['mate-imperial-cuero-crudo'],
+    qtyInputId: 'mateImperialCueroCrudoQty',
+    buttonSelector: '[data-product-id="mate-imperial-cuero-crudo"]',
+    stockMessageId: 'mateImperialCueroCrudoStockMessage',
+    detailPriceIds: ['mateImperialCueroCrudoPrice'],
+    catalogPriceId: 'catalogPriceMateImperialCueroCrudo',
+    cardStockSelector: '[data-card-stock="mate-imperial-cuero-crudo"]',
+    getOptions: () => ({}),
+    getQty: () => Number(document.getElementById('mateImperialCueroCrudoQty')?.value || 1),
+    getSku: () => 'mate-imperial-cuero-crudo',
+  },
+  'mate-imperial-liso': {
+    name: 'Mate Imperial Liso',
+    categoryLabel: 'Mate · Imperial',
+    price: 35000,
+    skus: ['mate-imperial-liso'],
+    qtyInputId: 'mateImperialLisoQty',
+    buttonSelector: '[data-product-id="mate-imperial-liso"]',
+    stockMessageId: 'mateImperialLisoStockMessage',
+    detailPriceIds: ['mateImperialLisoPrice'],
+    catalogPriceId: 'catalogPriceMateImperialLiso',
+    cardStockSelector: '[data-card-stock="mate-imperial-liso"]',
+    getOptions: () => ({}),
+    getQty: () => Number(document.getElementById('mateImperialLisoQty')?.value || 1),
+    getSku: () => 'mate-imperial-liso',
+  },
+  'matera-uruguaya': {
+    name: 'Matera Uruguaya',
+    categoryLabel: 'Matera',
+    price: 25000,
+    skus: ['matera-uruguaya'],
+    qtyInputId: 'materaUruguayaQty',
+    buttonSelector: '[data-product-id="matera-uruguaya"]',
+    stockMessageId: 'materaUruguayaStockMessage',
+    detailPriceIds: ['materaUruguayaPrice'],
+    catalogPriceId: 'catalogPriceMateraUruguaya',
+    cardStockSelector: '[data-card-stock="matera-uruguaya"]',
+    getOptions: () => ({}),
+    getQty: () => Number(document.getElementById('materaUruguayaQty')?.value || 1),
+    getSku: () => 'matera-uruguaya',
+  },
+  'bombillon-cincelado-colonial': {
+    name: 'Bombillón Cincelado Colonial',
+    categoryLabel: 'Bombillón',
+    price: 25000,
+    skus: ['bombillon-cincelado-colonial'],
+    qtyInputId: 'bombillonColonialQty',
+    buttonSelector: '[data-product-id="bombillon-cincelado-colonial"]',
+    stockMessageId: 'bombillonColonialStockMessage',
+    detailPriceIds: ['bombillonColonialPrice'],
+    catalogPriceId: 'catalogPriceBombillonColonial',
+    cardStockSelector: '[data-card-stock="bombillon-cincelado-colonial"]',
+    getOptions: () => ({}),
+    getQty: () => Number(document.getElementById('bombillonColonialQty')?.value || 1),
+    getSku: () => 'bombillon-cincelado-colonial',
+  },
+  'bombillon-cincelado-el-noble': {
+    name: 'Bombillón Cincelado El Noble',
+    categoryLabel: 'Bombillón',
+    price: 25000,
+    skus: ['bombillon-cincelado-el-noble'],
+    qtyInputId: 'bombillonNobleQty',
+    buttonSelector: '[data-product-id="bombillon-cincelado-el-noble"]',
+    stockMessageId: 'bombillonNobleStockMessage',
+    detailPriceIds: ['bombillonNoblePrice'],
+    catalogPriceId: 'catalogPriceBombillonNoble',
+    cardStockSelector: '[data-card-stock="bombillon-cincelado-el-noble"]',
+    getOptions: () => ({}),
+    getQty: () => Number(document.getElementById('bombillonNobleQty')?.value || 1),
+    getSku: () => 'bombillon-cincelado-el-noble',
   }
 };
 
@@ -100,6 +232,21 @@ const catalogCopy = {
     title: 'Materas',
     subtitle: 'Materas para llevar tu mate a todos lados.',
     breadcrumb: 'Inicio · Catálogo · Materas'
+  },
+  'imperiales-premium': {
+    title: 'Imperiales',
+    subtitle: 'Mates imperiales de la línea premium.',
+    breadcrumb: 'Inicio · Mates · Premium · Imperiales'
+  },
+  camioneros: {
+    title: 'Camioneros',
+    subtitle: 'Mates camioneros de la sección económica.',
+    breadcrumb: 'Inicio · Mates · Económica · Camioneros'
+  },
+  'imperiales-eco': {
+    title: 'Imperiales',
+    subtitle: 'Mates imperiales de la sección económica.',
+    breadcrumb: 'Inicio · Mates · Económica · Imperiales'
   }
 };
 
@@ -585,23 +732,26 @@ function showCatalog(filter = 'all', shouldScroll = true) {
   if (subtitle) subtitle.textContent = copy.subtitle;
   if (breadcrumb) breadcrumb.textContent = copy.breadcrumb;
 
+  // Filtros que son "tipos" dentro de Mates (sub-grupos de Premium/Económica).
+  const typeFilters = ['torpedos', 'imperiales-premium', 'camioneros', 'imperiales-eco'];
+  const isTypeFilter = typeFilters.includes(filter);
+
   // Cada filtro apunta a una categoría principal del catálogo.
   const filterToCategory = {
     mates: 'mates',
-    torpedos: 'mates',
     bombillones: 'bombillones',
     materas: 'materas',
   };
-  const targetCategory = filterToCategory[filter];
+  const targetCategory = isTypeFilter ? 'mates' : filterToCategory[filter];
 
   document.querySelectorAll('.catalog-category').forEach(section => {
     const visible = filter === 'all' || section.dataset.category === targetCategory;
     section.hidden = !visible;
   });
 
-  // "Torpedos" es un tipo dentro de la Sección Premium: al filtrarlo,
-  // mostramos solo ese grupo y ocultamos las sub-secciones que no lo contienen.
-  const onlyType = filter === 'torpedos' ? 'torpedos' : null;
+  // Un filtro por tipo (ej. Torpedos, Imperiales, Camioneros) muestra solo ese
+  // grupo dentro de Mates y oculta las sub-secciones que no lo contienen.
+  const onlyType = isTypeFilter ? filter : null;
 
   document.querySelectorAll('.catalog-subsection').forEach(sub => {
     sub.hidden = onlyType ? !sub.querySelector(`.catalog-type-group[data-type="${onlyType}"]`) : false;
@@ -678,11 +828,14 @@ function initNavigation() {
 }
 
 function initProductGallery() {
+  // Galería genérica por atributos: cada thumb tiene data-image y (opcional)
+  // data-variant; el <select data-image-variant> de su panel sincroniza la foto.
   document.querySelectorAll('[data-detail-thumb]').forEach(button => {
     button.addEventListener('click', () => {
       const gallery = button.closest('.detail-gallery');
+      const panel = button.closest('[data-detail-panel]');
       const image = button.dataset.image;
-      const colorName = button.dataset.colorName;
+      const alt = button.dataset.alt || '';
 
       gallery.querySelectorAll('[data-detail-thumb]').forEach(item => item.classList.remove('active'));
       button.classList.add('active');
@@ -692,34 +845,43 @@ function initProductGallery() {
 
       if (mainImage) {
         mainImage.src = image;
-        if (colorName) mainImage.alt = `Mate Torpedo cincelado joyero color ${colorName}`;
+        if (alt) mainImage.alt = alt;
       }
 
       if (zoomButton) {
         zoomButton.dataset.full = image;
-        if (colorName) zoomButton.dataset.alt = `Mate Torpedo cincelado joyero color ${colorName}`;
+        if (alt) zoomButton.dataset.alt = alt;
       }
 
-      const mateColorSelect = document.getElementById('mateColorSelect');
-      if (colorName && mateColorSelect) {
-        mateColorSelect.value = colorName;
-        updateProductStockUI('torpedo-joyero');
-        updateProductPriceUI('torpedo-joyero');
+      const variant = button.dataset.variant;
+      const variantSelect = panel?.querySelector('select[data-image-variant]');
+      if (variant && variantSelect && variantSelect.value !== variant) {
+        variantSelect.value = variant;
+      }
+
+      const productId = panel?.dataset.detailPanel;
+      if (productId && products[productId]) {
+        updateProductStockUI(productId);
+        updateProductPriceUI(productId);
       }
     });
   });
 
-  document.getElementById('mateColorSelect')?.addEventListener('change', () => {
-    const color = document.getElementById('mateColorSelect').value;
-    const selectedThumb = [...document.querySelectorAll('#mateThumbs [data-detail-thumb]')]
-      .find(button => button.dataset.colorName === color);
+  document.querySelectorAll('select[data-image-variant]').forEach(select => {
+    select.addEventListener('change', () => {
+      const panel = select.closest('[data-detail-panel]');
+      const thumb = panel?.querySelector(`[data-detail-thumb][data-variant="${select.value}"]`);
 
-    if (selectedThumb) {
-      selectedThumb.click();
-    } else {
-      updateProductStockUI('torpedo-joyero');
-      updateProductPriceUI('torpedo-joyero');
-    }
+      if (thumb) {
+        thumb.click();
+      } else {
+        const productId = panel?.dataset.detailPanel;
+        if (productId && products[productId]) {
+          updateProductStockUI(productId);
+          updateProductPriceUI(productId);
+        }
+      }
+    });
   });
 
   document.querySelectorAll('.image-zoom').forEach(button => {

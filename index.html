@@ -51,7 +51,10 @@
               <button type="button" class="mega-heading" data-catalog-filter="mates">MATES</button>
               <button type="button" class="mega-link" data-catalog-filter="mates">Sección Premium</button>
               <button type="button" class="mega-link mega-sublink" data-catalog-filter="torpedos">Torpedos</button>
+              <button type="button" class="mega-link mega-sublink" data-catalog-filter="imperiales-premium">Imperiales</button>
               <button type="button" class="mega-link" data-catalog-filter="mates">Sección Económica</button>
+              <button type="button" class="mega-link mega-sublink" data-catalog-filter="camioneros">Camioneros</button>
+              <button type="button" class="mega-link mega-sublink" data-catalog-filter="imperiales-eco">Imperiales</button>
             </div>
             <div class="mega-column">
               <button type="button" class="mega-heading" data-catalog-filter="bombillones">BOMBILLONES</button>
@@ -143,6 +146,9 @@
           <button class="catalog-filter active" type="button" data-catalog-filter="all">Todos</button>
           <button class="catalog-filter" type="button" data-catalog-filter="mates">Mates</button>
           <button class="catalog-filter" type="button" data-catalog-filter="torpedos">Torpedos</button>
+          <button class="catalog-filter" type="button" data-catalog-filter="imperiales-premium">Imperiales Premium</button>
+          <button class="catalog-filter" type="button" data-catalog-filter="camioneros">Camioneros</button>
+          <button class="catalog-filter" type="button" data-catalog-filter="imperiales-eco">Imperiales Económica</button>
           <button class="catalog-filter" type="button" data-catalog-filter="bombillones">Bombillones</button>
           <button class="catalog-filter" type="button" data-catalog-filter="materas">Materas</button>
         </div>
@@ -170,22 +176,90 @@
                         </div>
                       </button>
                     </article>
+
+                    <article class="catalog-product-card" data-catalog-card data-product-id="torpedo-roma">
+                      <button class="catalog-card-button" type="button" data-open-product="torpedo-roma" aria-label="Ver Mate Torpedo Roma">
+                        <span class="stock-ribbon" data-card-stock="torpedo-roma"></span>
+                        <img src="assets/torpedo-roma-negro.jpg" alt="Mate Torpedo Roma" />
+                        <div class="catalog-card-content">
+                          <p class="product-tag">Mate · Torpedo</p>
+                          <h3>Mate Torpedo Roma</h3>
+                          <strong class="catalog-card-price" id="catalogPriceTorpedoRoma">$50.000</strong>
+                          <span class="catalog-card-action">Ver producto</span>
+                        </div>
+                      </button>
+                    </article>
+                  </div>
+                </div>
+
+                <div class="catalog-type-group" data-type="imperiales-premium">
+                  <h5 class="catalog-type-title">Imperiales</h5>
+                  <div class="catalog-products-grid">
+                    <article class="catalog-product-card" data-catalog-card data-product-id="mate-imperial-cuero-crudo">
+                      <button class="catalog-card-button" type="button" data-open-product="mate-imperial-cuero-crudo" aria-label="Ver Mate Imperial Cuero Crudo">
+                        <span class="stock-ribbon" data-card-stock="mate-imperial-cuero-crudo"></span>
+                        <img src="assets/mate-imperial-cuero-crudo.jpg" alt="Mate Imperial Cuero Crudo" />
+                        <div class="catalog-card-content">
+                          <p class="product-tag">Mate · Imperial</p>
+                          <h3>Mate Imperial Cuero Crudo</h3>
+                          <strong class="catalog-card-price" id="catalogPriceMateImperialCueroCrudo">$45.000</strong>
+                          <span class="catalog-card-action">Ver producto</span>
+                        </div>
+                      </button>
+                    </article>
                   </div>
                 </div>
               </div>
 
               <div class="catalog-subsection" data-subsection="economica">
                 <h4 class="catalog-subsection-title">Sección Económica</h4>
-                <div class="catalog-products-grid">
-                  <article class="catalog-product-card catalog-card-placeholder">
-                    <div class="catalog-card-button is-placeholder">
-                      <div class="catalog-card-content">
-                        <p class="product-tag">Mate</p>
-                        <h3>Próximamente</h3>
-                        <span class="catalog-card-action">Nuevos productos en camino</span>
-                      </div>
-                    </div>
-                  </article>
+                <div class="catalog-type-group" data-type="camioneros">
+                  <h5 class="catalog-type-title">Camioneros</h5>
+                  <div class="catalog-products-grid">
+                    <article class="catalog-product-card" data-catalog-card data-product-id="mate-criollito">
+                      <button class="catalog-card-button" type="button" data-open-product="mate-criollito" aria-label="Ver Mate Criollito">
+                        <span class="stock-ribbon" data-card-stock="mate-criollito"></span>
+                        <img src="assets/mate-criollito.jpg" alt="Mate Criollito" />
+                        <div class="catalog-card-content">
+                          <p class="product-tag">Mate · Camionero</p>
+                          <h3>Mate Criollito</h3>
+                          <strong class="catalog-card-price" id="catalogPriceMateCriollito">$15.000</strong>
+                          <span class="catalog-card-action">Ver producto</span>
+                        </div>
+                      </button>
+                    </article>
+
+                    <article class="catalog-product-card" data-catalog-card data-product-id="mate-coquito">
+                      <button class="catalog-card-button" type="button" data-open-product="mate-coquito" aria-label="Ver Mate Coquito">
+                        <span class="stock-ribbon" data-card-stock="mate-coquito"></span>
+                        <img src="assets/mate-coquito.jpg" alt="Mate Coquito" />
+                        <div class="catalog-card-content">
+                          <p class="product-tag">Mate · Camionero</p>
+                          <h3>Mate Coquito</h3>
+                          <strong class="catalog-card-price" id="catalogPriceMateCoquito">$28.000</strong>
+                          <span class="catalog-card-action">Ver producto</span>
+                        </div>
+                      </button>
+                    </article>
+                  </div>
+                </div>
+
+                <div class="catalog-type-group" data-type="imperiales-eco">
+                  <h5 class="catalog-type-title">Imperiales</h5>
+                  <div class="catalog-products-grid">
+                    <article class="catalog-product-card" data-catalog-card data-product-id="mate-imperial-liso">
+                      <button class="catalog-card-button" type="button" data-open-product="mate-imperial-liso" aria-label="Ver Mate Imperial Liso">
+                        <span class="stock-ribbon" data-card-stock="mate-imperial-liso"></span>
+                        <img src="assets/mate-imperial-liso.jpg" alt="Mate Imperial Liso" />
+                        <div class="catalog-card-content">
+                          <p class="product-tag">Mate · Imperial</p>
+                          <h3>Mate Imperial Liso</h3>
+                          <strong class="catalog-card-price" id="catalogPriceMateImperialLiso">$35.000</strong>
+                          <span class="catalog-card-action">Ver producto</span>
+                        </div>
+                      </button>
+                    </article>
+                  </div>
                 </div>
               </div>
             </div>
@@ -219,20 +293,49 @@
                   </div>
                 </button>
               </article>
+
+              <article class="catalog-product-card" data-catalog-card data-product-id="bombillon-cincelado-colonial">
+                <button class="catalog-card-button" type="button" data-open-product="bombillon-cincelado-colonial" aria-label="Ver Bombillón Cincelado Colonial">
+                  <span class="stock-ribbon" data-card-stock="bombillon-cincelado-colonial"></span>
+                  <img src="assets/bombillon-cincelado-colonial.jpg" alt="Bombillón Cincelado Colonial" />
+                  <div class="catalog-card-content">
+                    <p class="product-tag">Bombillón</p>
+                    <h3>Bombillón Cincelado Colonial</h3>
+                    <strong class="catalog-card-price" id="catalogPriceBombillonColonial">$25.000</strong>
+                    <span class="catalog-card-action">Ver producto</span>
+                  </div>
+                </button>
+              </article>
+
+              <article class="catalog-product-card" data-catalog-card data-product-id="bombillon-cincelado-el-noble">
+                <button class="catalog-card-button" type="button" data-open-product="bombillon-cincelado-el-noble" aria-label="Ver Bombillón Cincelado El Noble">
+                  <span class="stock-ribbon" data-card-stock="bombillon-cincelado-el-noble"></span>
+                  <img src="assets/bombillon-cincelado-el-noble.jpg" alt="Bombillón Cincelado El Noble" />
+                  <div class="catalog-card-content">
+                    <p class="product-tag">Bombillón</p>
+                    <h3>Bombillón Cincelado El Noble</h3>
+                    <strong class="catalog-card-price" id="catalogPriceBombillonNoble">$25.000</strong>
+                    <span class="catalog-card-action">Ver producto</span>
+                  </div>
+                </button>
+              </article>
             </div>
           </section>
 
           <section class="catalog-category" data-category="materas">
             <h3 class="catalog-category-title">Materas</h3>
             <div class="catalog-products-grid">
-              <article class="catalog-product-card catalog-card-placeholder">
-                <div class="catalog-card-button is-placeholder">
+              <article class="catalog-product-card" data-catalog-card data-product-id="matera-uruguaya">
+                <button class="catalog-card-button" type="button" data-open-product="matera-uruguaya" aria-label="Ver Matera Uruguaya">
+                  <span class="stock-ribbon" data-card-stock="matera-uruguaya"></span>
+                  <img src="assets/matera-uruguaya.jpg" alt="Matera Uruguaya" />
                   <div class="catalog-card-content">
                     <p class="product-tag">Matera</p>
-                    <h3>Próximamente</h3>
-                    <span class="catalog-card-action">Nuevos productos en camino</span>
+                    <h3>Matera Uruguaya</h3>
+                    <strong class="catalog-card-price" id="catalogPriceMateraUruguaya">$25.000</strong>
+                    <span class="catalog-card-action">Ver producto</span>
                   </div>
-                </div>
+                </button>
               </article>
             </div>
           </section>
@@ -246,10 +349,10 @@
             <div class="product-detail-layout">
               <div class="detail-gallery">
                 <div class="detail-thumbs" id="mateThumbs">
-                  <button class="detail-thumb active" type="button" data-detail-thumb data-image="assets/torpedo-suela.png" data-color-name="Suela"><img src="assets/torpedo-suela.png" alt="Torpedo color suela"></button>
-                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/torpedo-borravino.png" data-color-name="Borravino"><img src="assets/torpedo-borravino.png" alt="Torpedo color borravino"></button>
-                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/torpedo-chocolate.png" data-color-name="Chocolate"><img src="assets/torpedo-chocolate.png" alt="Torpedo color chocolate"></button>
-                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/torpedo-negro.png" data-color-name="Negro"><img src="assets/torpedo-negro.png" alt="Torpedo color negro"></button>
+                  <button class="detail-thumb active" type="button" data-detail-thumb data-image="assets/torpedo-suela.png" data-variant="Suela" data-alt="Mate Torpedo cincelado joyero color suela"><img src="assets/torpedo-suela.png" alt="Torpedo color suela"></button>
+                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/torpedo-borravino.png" data-variant="Borravino" data-alt="Mate Torpedo cincelado joyero color borravino"><img src="assets/torpedo-borravino.png" alt="Torpedo color borravino"></button>
+                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/torpedo-chocolate.png" data-variant="Chocolate" data-alt="Mate Torpedo cincelado joyero color chocolate"><img src="assets/torpedo-chocolate.png" alt="Torpedo color chocolate"></button>
+                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/torpedo-negro.png" data-variant="Negro" data-alt="Mate Torpedo cincelado joyero color negro"><img src="assets/torpedo-negro.png" alt="Torpedo color negro"></button>
                 </div>
 
                 <button class="image-zoom detail-main-image-button clean-image-button" type="button" data-full="assets/torpedo-suela.png" data-alt="Mate Torpedo cincelado joyero color suela">
@@ -267,7 +370,7 @@
                 <p class="detail-description">Mate torpedo de primera calidad con terminación cincelada joyera y una presencia clásica, rústica y elegante.</p>
 
                 <label class="field-label" for="mateColorSelect">Color</label>
-                <select id="mateColorSelect" data-stock-watch>
+                <select id="mateColorSelect" data-stock-watch data-image-variant>
                   <option value="Suela">Suela</option>
                   <option value="Borravino">Borravino</option>
                   <option value="Chocolate">Chocolate</option>
@@ -358,6 +461,269 @@
                 <div class="detail-cart-row">
                   <input type="number" id="bombillonPremiumQty" min="1" value="1" data-stock-watch />
                   <button class="btn add-to-cart" type="button" data-product-id="bombillon-premium">Agregar al carrito</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="catalog-detail-panel" data-detail-panel="torpedo-roma" hidden>
+            <div class="product-breadcrumb">Inicio · Mates · Premium · Torpedos · Mate Torpedo Roma</div>
+            <div class="product-detail-layout">
+              <div class="detail-gallery">
+                <div class="detail-thumbs">
+                  <button class="detail-thumb active" type="button" data-detail-thumb data-image="assets/torpedo-roma-negro.jpg" data-variant="Negro" data-alt="Mate Torpedo Roma color negro"><img src="assets/torpedo-roma-negro.jpg" alt="Mate Torpedo Roma color negro"></button>
+                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/torpedo-roma-negro-2.jpg" data-variant="Negro" data-alt="Mate Torpedo Roma color negro"><img src="assets/torpedo-roma-negro-2.jpg" alt="Mate Torpedo Roma color negro"></button>
+                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/torpedo-roma-borravino.jpg" data-variant="Borravino" data-alt="Mate Torpedo Roma color borravino (cuero repujado)"><img src="assets/torpedo-roma-borravino.jpg" alt="Mate Torpedo Roma color borravino"></button>
+                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/torpedo-roma-borravino-2.jpg" data-variant="Borravino" data-alt="Mate Torpedo Roma color borravino (cuero repujado)"><img src="assets/torpedo-roma-borravino-2.jpg" alt="Mate Torpedo Roma color borravino"></button>
+                </div>
+
+                <button class="image-zoom detail-main-image-button clean-image-button" type="button" data-full="assets/torpedo-roma-negro.jpg" data-alt="Mate Torpedo Roma color negro">
+                  <img src="assets/torpedo-roma-negro.jpg" alt="Mate Torpedo Roma color negro" class="detail-main-image" />
+                </button>
+              </div>
+
+              <div class="detail-info">
+                <p class="product-breadcrumb desktop-only">Inicio · Mates · Premium · Torpedos</p>
+                <h2>Mate Torpedo Roma</h2>
+                <strong class="detail-price" id="torpedoRomaPrice">$50.000</strong>
+                <p class="detail-transfer">Pago por transferencia bancaria. Coordinamos el envío por WhatsApp.</p>
+                <p class="stock-message" id="torpedoRomaStockMessage">Consultando disponibilidad...</p>
+
+                <p class="detail-description">Mate Torpedo Roma de primera calidad, trabajado con dedicación y terminaciones cuidadas. Su estilo clásico y elegante le da una presencia única para acompañar cada ronda de mate.</p>
+
+                <label class="field-label" for="torpedoRomaColorSelect">Color</label>
+                <select id="torpedoRomaColorSelect" data-stock-watch data-image-variant>
+                  <option value="Negro">Negro</option>
+                  <option value="Borravino">Borravino (cuero repujado)</option>
+                </select>
+
+                <label class="field-label" for="torpedoRomaQty">Cantidad</label>
+                <div class="detail-cart-row">
+                  <input type="number" id="torpedoRomaQty" min="1" value="1" data-stock-watch />
+                  <button class="btn add-to-cart" type="button" data-product-id="torpedo-roma">Agregar al carrito</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="catalog-detail-panel" data-detail-panel="mate-criollito" hidden>
+            <div class="product-breadcrumb">Inicio · Mates · Económica · Camioneros · Mate Criollito</div>
+            <div class="product-detail-layout">
+              <div class="detail-gallery">
+                <div class="detail-thumbs">
+                  <button class="detail-thumb active" type="button" data-detail-thumb data-image="assets/mate-criollito.jpg" data-alt="Mate Criollito"><img src="assets/mate-criollito.jpg" alt="Mate Criollito"></button>
+                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/mate-criollito-2.jpg" data-alt="Mate Criollito"><img src="assets/mate-criollito-2.jpg" alt="Mate Criollito"></button>
+                </div>
+
+                <button class="image-zoom detail-main-image-button clean-image-button" type="button" data-full="assets/mate-criollito.jpg" data-alt="Mate Criollito">
+                  <img src="assets/mate-criollito.jpg" alt="Mate Criollito" class="detail-main-image" />
+                </button>
+              </div>
+
+              <div class="detail-info">
+                <p class="product-breadcrumb desktop-only">Inicio · Mates · Económica · Camioneros</p>
+                <h2>Mate Criollito</h2>
+                <strong class="detail-price" id="mateCriollitoPrice">$15.000</strong>
+                <p class="detail-transfer">Pago por transferencia bancaria. Coordinamos el envío por WhatsApp.</p>
+                <p class="stock-message" id="mateCriollitoStockMessage">Consultando disponibilidad...</p>
+
+                <p class="detail-description">Mate Criollito de primera calidad, con una terminación cuidada y un estilo sobrio y auténtico. Una pieza simple y noble para acompañar tu mate de todos los días.</p>
+
+                <label class="field-label" for="mateCriollitoQty">Cantidad</label>
+                <div class="detail-cart-row">
+                  <input type="number" id="mateCriollitoQty" min="1" value="1" data-stock-watch />
+                  <button class="btn add-to-cart" type="button" data-product-id="mate-criollito">Agregar al carrito</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="catalog-detail-panel" data-detail-panel="mate-coquito" hidden>
+            <div class="product-breadcrumb">Inicio · Mates · Económica · Camioneros · Mate Coquito</div>
+            <div class="product-detail-layout">
+              <div class="detail-gallery">
+                <div class="detail-thumbs">
+                  <button class="detail-thumb active" type="button" data-detail-thumb data-image="assets/mate-coquito.jpg" data-alt="Mate Coquito"><img src="assets/mate-coquito.jpg" alt="Mate Coquito"></button>
+                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/mate-coquito-2.jpg" data-alt="Mate Coquito"><img src="assets/mate-coquito-2.jpg" alt="Mate Coquito"></button>
+                </div>
+
+                <button class="image-zoom detail-main-image-button clean-image-button" type="button" data-full="assets/mate-coquito.jpg" data-alt="Mate Coquito">
+                  <img src="assets/mate-coquito.jpg" alt="Mate Coquito" class="detail-main-image" />
+                </button>
+              </div>
+
+              <div class="detail-info">
+                <p class="product-breadcrumb desktop-only">Inicio · Mates · Económica · Camioneros</p>
+                <h2>Mate Coquito</h2>
+                <strong class="detail-price" id="mateCoquitoPrice">$28.000</strong>
+                <p class="detail-transfer">Pago por transferencia bancaria. Coordinamos el envío por WhatsApp.</p>
+                <p class="stock-message" id="mateCoquitoStockMessage">Consultando disponibilidad...</p>
+
+                <p class="detail-description">Mate Coquito de primera calidad, con virola labrada en metal plateado y base de cuero gamuzado. Su terminación cuidada y su estilo rústico y elegante lo hacen ideal para disfrutar cada mate en ronda.</p>
+
+                <label class="field-label" for="mateCoquitoQty">Cantidad</label>
+                <div class="detail-cart-row">
+                  <input type="number" id="mateCoquitoQty" min="1" value="1" data-stock-watch />
+                  <button class="btn add-to-cart" type="button" data-product-id="mate-coquito">Agregar al carrito</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="catalog-detail-panel" data-detail-panel="mate-imperial-cuero-crudo" hidden>
+            <div class="product-breadcrumb">Inicio · Mates · Premium · Imperiales · Mate Imperial Cuero Crudo</div>
+            <div class="product-detail-layout">
+              <div class="detail-gallery">
+                <div class="detail-thumbs">
+                  <button class="detail-thumb active" type="button" data-detail-thumb data-image="assets/mate-imperial-cuero-crudo.jpg" data-alt="Mate Imperial Cuero Crudo"><img src="assets/mate-imperial-cuero-crudo.jpg" alt="Mate Imperial Cuero Crudo"></button>
+                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/mate-imperial-cuero-crudo-2.jpg" data-alt="Mate Imperial Cuero Crudo"><img src="assets/mate-imperial-cuero-crudo-2.jpg" alt="Mate Imperial Cuero Crudo"></button>
+                </div>
+
+                <button class="image-zoom detail-main-image-button clean-image-button" type="button" data-full="assets/mate-imperial-cuero-crudo.jpg" data-alt="Mate Imperial Cuero Crudo">
+                  <img src="assets/mate-imperial-cuero-crudo.jpg" alt="Mate Imperial Cuero Crudo" class="detail-main-image" />
+                </button>
+              </div>
+
+              <div class="detail-info">
+                <p class="product-breadcrumb desktop-only">Inicio · Mates · Premium · Imperiales</p>
+                <h2>Mate Imperial Cuero Crudo</h2>
+                <strong class="detail-price" id="mateImperialCueroCrudoPrice">$45.000</strong>
+                <p class="detail-transfer">Pago por transferencia bancaria. Coordinamos el envío por WhatsApp.</p>
+                <p class="stock-message" id="mateImperialCueroCrudoStockMessage">Consultando disponibilidad...</p>
+
+                <p class="detail-description">Mate Imperial de cuero crudo de primera calidad, con virola labrada en metal plateado, costura trenzada y base a juego. Su terminación cuidada y su estilo rústico y señorial lo hacen una pieza con mucha presencia para cada ronda de mate.</p>
+
+                <label class="field-label" for="mateImperialCueroCrudoQty">Cantidad</label>
+                <div class="detail-cart-row">
+                  <input type="number" id="mateImperialCueroCrudoQty" min="1" value="1" data-stock-watch />
+                  <button class="btn add-to-cart" type="button" data-product-id="mate-imperial-cuero-crudo">Agregar al carrito</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="catalog-detail-panel" data-detail-panel="mate-imperial-liso" hidden>
+            <div class="product-breadcrumb">Inicio · Mates · Económica · Imperiales · Mate Imperial Liso</div>
+            <div class="product-detail-layout">
+              <div class="detail-gallery">
+                <div class="detail-thumbs">
+                  <button class="detail-thumb active" type="button" data-detail-thumb data-image="assets/mate-imperial-liso.jpg" data-alt="Mate Imperial Liso"><img src="assets/mate-imperial-liso.jpg" alt="Mate Imperial Liso"></button>
+                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/mate-imperial-liso-2.jpg" data-alt="Mate Imperial Liso"><img src="assets/mate-imperial-liso-2.jpg" alt="Mate Imperial Liso"></button>
+                </div>
+
+                <button class="image-zoom detail-main-image-button clean-image-button" type="button" data-full="assets/mate-imperial-liso.jpg" data-alt="Mate Imperial Liso">
+                  <img src="assets/mate-imperial-liso.jpg" alt="Mate Imperial Liso" class="detail-main-image" />
+                </button>
+              </div>
+
+              <div class="detail-info">
+                <p class="product-breadcrumb desktop-only">Inicio · Mates · Económica · Imperiales</p>
+                <h2>Mate Imperial Liso</h2>
+                <strong class="detail-price" id="mateImperialLisoPrice">$35.000</strong>
+                <p class="detail-transfer">Pago por transferencia bancaria. Coordinamos el envío por WhatsApp.</p>
+                <p class="stock-message" id="mateImperialLisoStockMessage">Consultando disponibilidad...</p>
+
+                <p class="detail-description">Mate Imperial Liso de primera calidad, de estilo bien tradicional, con virola lisa en metal dorado y cuerpo de cuero en color marrón/chocolate. Su terminación cuidada y su presencia clásica lo hacen ideal para acompañar cada ronda de mate.</p>
+
+                <label class="field-label" for="mateImperialLisoQty">Cantidad</label>
+                <div class="detail-cart-row">
+                  <input type="number" id="mateImperialLisoQty" min="1" value="1" data-stock-watch />
+                  <button class="btn add-to-cart" type="button" data-product-id="mate-imperial-liso">Agregar al carrito</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="catalog-detail-panel" data-detail-panel="matera-uruguaya" hidden>
+            <div class="product-breadcrumb">Inicio · Materas · Matera Uruguaya</div>
+            <div class="product-detail-layout">
+              <div class="detail-gallery">
+                <div class="detail-thumbs">
+                  <button class="detail-thumb active" type="button" data-detail-thumb data-image="assets/matera-uruguaya.jpg" data-alt="Matera Uruguaya"><img src="assets/matera-uruguaya.jpg" alt="Matera Uruguaya"></button>
+                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/matera-uruguaya-2.jpg" data-alt="Matera Uruguaya"><img src="assets/matera-uruguaya-2.jpg" alt="Matera Uruguaya"></button>
+                  <button class="detail-thumb" type="button" data-detail-thumb data-image="assets/matera-uruguaya-3.jpg" data-alt="Matera Uruguaya"><img src="assets/matera-uruguaya-3.jpg" alt="Matera Uruguaya"></button>
+                </div>
+
+                <button class="image-zoom detail-main-image-button clean-image-button" type="button" data-full="assets/matera-uruguaya.jpg" data-alt="Matera Uruguaya">
+                  <img src="assets/matera-uruguaya.jpg" alt="Matera Uruguaya" class="detail-main-image" />
+                </button>
+              </div>
+
+              <div class="detail-info">
+                <p class="product-breadcrumb desktop-only">Inicio · Materas</p>
+                <h2>Matera Uruguaya</h2>
+                <strong class="detail-price" id="materaUruguayaPrice">$25.000</strong>
+                <p class="detail-transfer">Pago por transferencia bancaria. Coordinamos el envío por WhatsApp.</p>
+                <p class="stock-message" id="materaUruguayaStockMessage">Consultando disponibilidad...</p>
+
+                <p class="detail-description">Matera Uruguaya de primera calidad, en formato media canasta de color chocolate. Confeccionada en cuero con costura trenzada y detalles repujados, combina estilo, presencia y una terminación cuidada para llevar tu mate a todos lados.</p>
+
+                <label class="field-label" for="materaUruguayaQty">Cantidad</label>
+                <div class="detail-cart-row">
+                  <input type="number" id="materaUruguayaQty" min="1" value="1" data-stock-watch />
+                  <button class="btn add-to-cart" type="button" data-product-id="matera-uruguaya">Agregar al carrito</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="catalog-detail-panel" data-detail-panel="bombillon-cincelado-colonial" hidden>
+            <div class="product-breadcrumb">Inicio · Bombillones · Bombillón Cincelado Colonial</div>
+            <div class="product-detail-layout">
+              <div class="detail-gallery">
+                <div class="detail-thumbs">
+                  <button class="detail-thumb active" type="button" data-detail-thumb data-image="assets/bombillon-cincelado-colonial.jpg" data-alt="Bombillón Cincelado Colonial"><img src="assets/bombillon-cincelado-colonial.jpg" alt="Bombillón Cincelado Colonial"></button>
+                </div>
+
+                <button class="image-zoom detail-main-image-button clean-image-button" type="button" data-full="assets/bombillon-cincelado-colonial.jpg" data-alt="Bombillón Cincelado Colonial">
+                  <img src="assets/bombillon-cincelado-colonial.jpg" alt="Bombillón Cincelado Colonial" class="detail-main-image" />
+                </button>
+              </div>
+
+              <div class="detail-info">
+                <p class="product-breadcrumb desktop-only">Inicio · Bombillones</p>
+                <h2>Bombillón Cincelado Colonial</h2>
+                <strong class="detail-price" id="bombillonColonialPrice">$25.000</strong>
+                <p class="detail-transfer">Pago por transferencia bancaria. Coordinamos el envío por WhatsApp.</p>
+                <p class="stock-message" id="bombillonColonialStockMessage">Consultando disponibilidad...</p>
+
+                <p class="detail-description">Bombillón Cincelado Colonial de primera calidad, en formato semi-curvo con pico de bronce. Trabajado con terminación cincelada y detalles cuidados, suma estilo y una elegancia bien clásica a cada mate.</p>
+
+                <label class="field-label" for="bombillonColonialQty">Cantidad</label>
+                <div class="detail-cart-row">
+                  <input type="number" id="bombillonColonialQty" min="1" value="1" data-stock-watch />
+                  <button class="btn add-to-cart" type="button" data-product-id="bombillon-cincelado-colonial">Agregar al carrito</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="catalog-detail-panel" data-detail-panel="bombillon-cincelado-el-noble" hidden>
+            <div class="product-breadcrumb">Inicio · Bombillones · Bombillón Cincelado El Noble</div>
+            <div class="product-detail-layout">
+              <div class="detail-gallery">
+                <div class="detail-thumbs">
+                  <button class="detail-thumb active" type="button" data-detail-thumb data-image="assets/bombillon-cincelado-el-noble.jpg" data-alt="Bombillón Cincelado El Noble"><img src="assets/bombillon-cincelado-el-noble.jpg" alt="Bombillón Cincelado El Noble"></button>
+                </div>
+
+                <button class="image-zoom detail-main-image-button clean-image-button" type="button" data-full="assets/bombillon-cincelado-el-noble.jpg" data-alt="Bombillón Cincelado El Noble">
+                  <img src="assets/bombillon-cincelado-el-noble.jpg" alt="Bombillón Cincelado El Noble" class="detail-main-image" />
+                </button>
+              </div>
+
+              <div class="detail-info">
+                <p class="product-breadcrumb desktop-only">Inicio · Bombillones</p>
+                <h2>Bombillón Cincelado El Noble</h2>
+                <strong class="detail-price" id="bombillonNoblePrice">$25.000</strong>
+                <p class="detail-transfer">Pago por transferencia bancaria. Coordinamos el envío por WhatsApp.</p>
+                <p class="stock-message" id="bombillonNobleStockMessage">Consultando disponibilidad...</p>
+
+                <p class="detail-description">Bombillón Cincelado El Noble de primera calidad, en formato recto con pico de bronce. Con terminación cincelada y detalles cuidados, aporta estilo y una elegancia bien clásica a cada mate.</p>
+
+                <label class="field-label" for="bombillonNobleQty">Cantidad</label>
+                <div class="detail-cart-row">
+                  <input type="number" id="bombillonNobleQty" min="1" value="1" data-stock-watch />
+                  <button class="btn add-to-cart" type="button" data-product-id="bombillon-cincelado-el-noble">Agregar al carrito</button>
                 </div>
               </div>
             </div>
