@@ -997,6 +997,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initProductGallery();
   initCart();
   initScrollButtons();
+  initShare();
 
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
@@ -1026,4 +1027,169 @@ function applyInitialCatalogView() {
   } else {
     showCatalog('all', false);
   }
+}
+
+let shareToastTimer = null;
+function showToast(message) {
+  let toast = document.getElementById('shareToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'shareToast';
+    toast.className = 'share-toast';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add('visible');
+  window.clearTimeout(shareToastTimer);
+  shareToastTimer = window.setTimeout(() => toast.classList.remove('visible'), 2800);
+}
+
+// Botón "Compartir" por producto + hoja de opciones (WhatsApp e Instagram primero).
+// Solo se activa en la página del catálogo (donde existen los paneles de detalle).
+function initShare() {
+  if (!document.getElementById('catalogDetailView')) return;
+
+  const shareIcons = {
+    whatsapp: '<svg viewBox="0 0 32 32" aria-hidden="true"><path fill="currentColor" d="M16.02 3.2A12.65 12.65 0 0 0 5.1 22.2L3.6 28.8l6.78-1.44A12.66 12.66 0 1 0 16.02 3.2Zm0 22.98c-1.95 0-3.76-.55-5.32-1.5l-.38-.23-4.02.85.88-3.9-.25-.4a10.13 10.13 0 1 1 9.09 5.18Zm5.72-7.58c-.31-.16-1.86-.92-2.15-1.02-.29-.11-.5-.16-.71.16-.21.31-.82 1.02-1 1.23-.18.21-.37.24-.69.08-.31-.16-1.33-.49-2.54-1.57-.94-.84-1.57-1.88-1.76-2.19-.18-.31-.02-.48.14-.64.14-.14.31-.37.47-.55.16-.18.21-.31.31-.52.1-.21.05-.39-.03-.55-.08-.16-.71-1.71-.97-2.34-.26-.61-.52-.53-.71-.54h-.61c-.21 0-.55.08-.84.39-.29.31-1.1 1.08-1.1 2.63 0 1.55 1.13 3.05 1.29 3.26.16.21 2.22 3.39 5.39 4.76.75.32 1.34.52 1.8.66.76.24 1.45.21 1.99.13.61-.09 1.86-.76 2.12-1.49.26-.73.26-1.36.18-1.49-.08-.13-.29-.21-.61-.37Z"/></svg>',
+    instagram: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.2" y="2.2" width="19.6" height="19.6" rx="5.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4.2" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="6.5" r="1.3" fill="currentColor"/></svg>',
+    telegram: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M21.9 4.3 18.8 19c-.2 1-.9 1.2-1.7.8l-4.6-3.4-2.2 2.1c-.25.25-.46.46-.95.46l.34-4.9 8.9-8c.39-.34-.08-.53-.6-.19L6.3 12.9l-4.7-1.47c-1-.32-1-1 .22-1.48L20.4 3c.85-.31 1.6.2 1.5 1.3Z"/></svg>',
+  };
+  const shareLetters = { facebook: 'f', x: 'X', email: '✉', link: '🔗', more: '•••' };
+
+  // Hoja de compartir (inyectada una sola vez)
+  let modal = document.getElementById('shareModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'shareModal';
+    modal.className = 'share-modal';
+    modal.setAttribute('aria-hidden', 'true');
+    modal.innerHTML =
+      '<div class="share-backdrop" data-share-close></div>' +
+      '<div class="share-sheet" role="dialog" aria-label="Compartir producto">' +
+        '<div class="share-sheet-header"><h3>Compartir</h3>' +
+        '<button type="button" class="share-close" data-share-close aria-label="Cerrar">✕</button></div>' +
+        '<p class="share-product" id="shareProductName"></p>' +
+        '<div class="share-options" id="shareOptions"></div>' +
+      '</div>';
+    document.body.appendChild(modal);
+  }
+
+  const optionsEl = modal.querySelector('#shareOptions');
+  const nameEl = modal.querySelector('#shareProductName');
+
+  function openShare(id, name) {
+    const url = `${location.origin}/catalogo#${id}`;
+    const text = `Mirá este producto de La Cebada: ${name}`;
+    const shareText = `${text} ${url}`;
+    const enc = encodeURIComponent;
+
+    nameEl.textContent = name;
+
+    const opts = [
+      { key: 'whatsapp', label: 'WhatsApp', href: `https://wa.me/?text=${enc(shareText)}` },
+      { key: 'instagram', label: 'Instagram', action: 'instagram' },
+      { key: 'facebook', label: 'Facebook', href: `https://www.facebook.com/sharer/sharer.php?u=${enc(url)}` },
+      { key: 'x', label: 'X', href: `https://twitter.com/intent/tweet?text=${enc(text)}&url=${enc(url)}` },
+      { key: 'telegram', label: 'Telegram', href: `https://t.me/share/url?url=${enc(url)}&text=${enc(text)}` },
+      { key: 'email', label: 'Email', href: `mailto:?subject=${enc('La Cebada')}&body=${enc(shareText)}` },
+      { key: 'link', label: 'Copiar enlace', action: 'copy' },
+    ];
+    if (navigator.share) opts.push({ key: 'more', label: 'Más apps', action: 'native' });
+
+    optionsEl.innerHTML = '';
+    opts.forEach(o => {
+      const el = o.href ? document.createElement('a') : document.createElement('button');
+      el.className = `share-option share-${o.key}`;
+      if (o.href) {
+        el.href = o.href;
+        el.target = '_blank';
+        el.rel = 'noopener';
+      } else {
+        el.type = 'button';
+      }
+      el.innerHTML = `<span class="share-ic">${shareIcons[o.key] || shareLetters[o.key] || ''}</span><span>${o.label}</span>`;
+
+      el.addEventListener('click', (event) => {
+        if (o.action === 'copy') {
+          event.preventDefault();
+          copyLink(url);
+        } else if (o.action === 'instagram') {
+          event.preventDefault();
+          copyLink(url, 'Enlace copiado: pegalo en tu historia o mensaje de Instagram');
+          window.open('https://www.instagram.com/lacebada_ok/', '_blank', 'noopener');
+        } else if (o.action === 'native') {
+          event.preventDefault();
+          navigator.share({ title: 'La Cebada', text, url }).catch(() => {});
+        }
+        closeShare();
+      });
+
+      optionsEl.appendChild(el);
+    });
+
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('no-scroll');
+  }
+
+  function closeShare() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('no-scroll');
+  }
+
+  function copyLink(url, message) {
+    const done = () => showToast(message || 'Enlace copiado');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(done).catch(() => fallbackCopy(url, done));
+    } else {
+      fallbackCopy(url, done);
+    }
+  }
+
+  function fallbackCopy(url, done) {
+    const ta = document.createElement('textarea');
+    ta.value = url;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (error) { /* sin clipboard */ }
+    ta.remove();
+    done();
+  }
+
+  modal.querySelectorAll('[data-share-close]').forEach(button => {
+    button.addEventListener('click', closeShare);
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') closeShare();
+  });
+
+  // Inyectar el botón "Compartir" en cada panel de detalle (después del precio)
+  document.querySelectorAll('.catalog-detail-panel').forEach(panel => {
+    const info = panel.querySelector('.detail-info');
+    if (!info || info.querySelector('.share-button')) return;
+
+    const id = panel.dataset.detailPanel;
+    const name = (panel.querySelector('h2')?.textContent || 'Producto').trim();
+    const price = info.querySelector('.detail-price');
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'share-button';
+    button.setAttribute('aria-label', `Compartir ${name}`);
+    button.innerHTML =
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M8 6.5 12 2.5l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 11v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+      '<span>Compartir</span>';
+    button.addEventListener('click', () => openShare(id, name));
+
+    if (price && price.nextSibling) {
+      info.insertBefore(button, price.nextSibling);
+    } else if (price) {
+      price.insertAdjacentElement('afterend', button);
+    } else {
+      info.appendChild(button);
+    }
+  });
 }
