@@ -22,8 +22,27 @@ const fallbackStock = {
 };
 
 let stockBySku = { ...fallbackStock };
-let cart = [];
+const CART_STORAGE_KEY = 'lacebada_cart';
+let cart = loadCartFromStorage();
 let activeCatalogFilter = 'all';
+
+function loadCartFromStorage() {
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveCart() {
+  try {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  } catch (error) {
+    /* almacenamiento no disponible: el carrito vive solo en memoria */
+  }
+}
 
 const products = {
   'torpedo-joyero': {
@@ -528,6 +547,8 @@ function renderCart() {
   cartTotal.textContent = formatCurrency(getTotal());
   cartCount.textContent = itemCount;
   if (checkoutButton) checkoutButton.disabled = cart.length === 0;
+
+  saveCart();
 }
 
 function validateCartAgainstStock() {
@@ -789,9 +810,14 @@ function showProductDetail(productId) {
 }
 
 function initCatalog() {
-  document.querySelectorAll('[data-catalog-filter]').forEach(button => {
-    button.addEventListener('click', () => {
-      showCatalog(button.dataset.catalogFilter || 'all');
+  const hasCatalog = !!document.getElementById('catalogListView');
+
+  document.querySelectorAll('[data-catalog-filter]').forEach(element => {
+    element.addEventListener('click', (event) => {
+      // En otras páginas, dejamos que el enlace navegue a /catalogo#cat=...
+      if (!hasCatalog) return;
+      event.preventDefault();
+      showCatalog(element.dataset.catalogFilter || 'all');
       const navLinks = document.querySelector('.nav-links');
       const navToggle = document.querySelector('.nav-toggle');
       navLinks?.classList.remove('open');
@@ -972,10 +998,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initCart();
   initScrollButtons();
 
-  document.getElementById('year').textContent = new Date().getFullYear();
+  const yearEl = document.getElementById('year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 
   renderCart();
-  showCatalog('all', false);
+  applyInitialCatalogView();
   updateAllProductStockUI();
 
   loadStockFromGoogleSheets().catch(error => {
@@ -983,3 +1010,20 @@ document.addEventListener('DOMContentLoaded', () => {
     updateAllProductStockUI();
   });
 });
+
+// En /catalogo: aplica el filtro o abre el producto según el hash de la URL
+// (ej. /catalogo#cat=torpedos o /catalogo#torpedo-roma). En otras páginas no hace nada.
+function applyInitialCatalogView() {
+  if (!document.getElementById('catalogListView')) return;
+
+  const hash = decodeURIComponent((location.hash || '').replace(/^#/, ''));
+
+  if (hash.startsWith('cat=')) {
+    showCatalog(hash.slice(4) || 'all', false);
+  } else if (hash && products[hash]) {
+    showCatalog('all', false);
+    showProductDetail(hash);
+  } else {
+    showCatalog('all', false);
+  }
+}
