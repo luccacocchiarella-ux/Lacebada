@@ -64,11 +64,10 @@
             <div class="mega-column">
               <a class="mega-heading" href="/catalogo#cat=mates" data-catalog-filter="mates">MATES</a>
               <a class="mega-link" href="/catalogo#cat=premium" data-catalog-filter="premium">Sección Premium</a>
-              <a class="mega-link mega-sublink" href="/catalogo#cat=torpedos" data-catalog-filter="torpedos">Torpedos</a>
-              <a class="mega-link mega-sublink" href="/catalogo#cat=imperiales-premium" data-catalog-filter="imperiales-premium">Imperiales</a>
               <a class="mega-link" href="/catalogo#cat=economica" data-catalog-filter="economica">Sección Económica</a>
+              <a class="mega-link mega-sublink" href="/catalogo#cat=torpedos" data-catalog-filter="torpedos">Torpedos</a>
+              <a class="mega-link mega-sublink" href="/catalogo#cat=imperiales" data-catalog-filter="imperiales">Imperiales</a>
               <a class="mega-link mega-sublink" href="/catalogo#cat=camioneros" data-catalog-filter="camioneros">Camioneros</a>
-              <a class="mega-link mega-sublink" href="/catalogo#cat=imperiales-eco" data-catalog-filter="imperiales-eco">Imperiales</a>
             </div>
             <div class="mega-column">
               <a class="mega-heading" href="/catalogo#cat=bombillones" data-catalog-filter="bombillones">BOMBILLONES</a>
@@ -101,10 +100,11 @@
         <div class="catalog-toolbar" aria-label="Filtros del catálogo">
           <button class="catalog-filter active" type="button" data-catalog-filter="all">Todos</button>
           <button class="catalog-filter" type="button" data-catalog-filter="mates">Mates</button>
+          <button class="catalog-filter" type="button" data-catalog-filter="premium">Sección Premium</button>
+          <button class="catalog-filter" type="button" data-catalog-filter="economica">Sección Económica</button>
           <button class="catalog-filter" type="button" data-catalog-filter="torpedos">Torpedos</button>
-          <button class="catalog-filter" type="button" data-catalog-filter="imperiales-premium">Imperiales Premium</button>
+          <button class="catalog-filter" type="button" data-catalog-filter="imperiales">Imperiales</button>
           <button class="catalog-filter" type="button" data-catalog-filter="camioneros">Camioneros</button>
-          <button class="catalog-filter" type="button" data-catalog-filter="imperiales-eco">Imperiales Económica</button>
           <button class="catalog-filter" type="button" data-catalog-filter="bombillones">Bombillones</button>
           <button class="catalog-filter" type="button" data-catalog-filter="materas">Materas</button>
         </div>
@@ -114,108 +114,97 @@
 
           <section class="catalog-category" data-category="mates">
             <h3 class="catalog-category-title">Mates</h3>
-            <div class="catalog-subsections">
-              <div class="catalog-subsection" data-subsection="premium">
-                <h4 class="catalog-subsection-title">Sección Premium</h4>
-                <div class="catalog-type-group" data-type="torpedos">
-                  <h5 class="catalog-type-title">Torpedos</h5>
-                  <div class="catalog-products-grid">
-                    <article class="catalog-product-card" data-catalog-card data-product-id="torpedo-joyero">
-                      <button class="catalog-card-button" type="button" data-open-product="torpedo-joyero" aria-label="Ver Torpedo cincelado joyero">
-                        <span class="stock-ribbon" data-card-stock="torpedo-joyero"></span>
-                        <img src="/assets/torpedo-suela.png" alt="Mate Torpedo cincelado joyero" />
-                        <div class="catalog-card-content">
-                          <p class="product-tag">Mate · Torpedo</p>
-                          <h3>Torpedo cincelado joyero</h3>
-                          <strong class="catalog-card-price" id="catalogPriceTorpedo">$60.000</strong>
-                          <span class="catalog-card-action">Ver producto</span>
-                        </div>
-                      </button>
-                    </article>
+            <div class="catalog-type-groups">
+              <div class="catalog-type-group" data-type="torpedos">
+                <h5 class="catalog-type-title">Torpedos</h5>
+                <div class="catalog-products-grid">
+                  <article class="catalog-product-card" data-catalog-card data-product-id="torpedo-joyero" data-section="premium">
+                    <button class="catalog-card-button" type="button" data-open-product="torpedo-joyero" aria-label="Ver Torpedo cincelado joyero">
+                      <span class="stock-ribbon" data-card-stock="torpedo-joyero"></span>
+                      <img src="/assets/torpedo-suela.png" alt="Mate Torpedo cincelado joyero" />
+                      <div class="catalog-card-content">
+                        <p class="product-tag">Mate · Torpedo</p>
+                        <h3>Torpedo cincelado joyero</h3>
+                        <strong class="catalog-card-price" id="catalogPriceTorpedo">$60.000</strong>
+                        <span class="catalog-card-action">Ver producto</span>
+                      </div>
+                    </button>
+                  </article>
 
-                    <article class="catalog-product-card" data-catalog-card data-product-id="torpedo-roma">
-                      <button class="catalog-card-button" type="button" data-open-product="torpedo-roma" aria-label="Ver Mate Torpedo Roma">
-                        <span class="stock-ribbon" data-card-stock="torpedo-roma"></span>
-                        <img src="/assets/torpedo-roma-negro.jpg" alt="Mate Torpedo Roma" />
-                        <div class="catalog-card-content">
-                          <p class="product-tag">Mate · Torpedo</p>
-                          <h3>Mate Torpedo Roma</h3>
-                          <strong class="catalog-card-price" id="catalogPriceTorpedoRoma">$50.000</strong>
-                          <span class="catalog-card-action">Ver producto</span>
-                        </div>
-                      </button>
-                    </article>
-                  </div>
-                </div>
-
-                <div class="catalog-type-group" data-type="imperiales-premium">
-                  <h5 class="catalog-type-title">Imperiales</h5>
-                  <div class="catalog-products-grid">
-                    <article class="catalog-product-card" data-catalog-card data-product-id="mate-imperial-cuero-crudo">
-                      <button class="catalog-card-button" type="button" data-open-product="mate-imperial-cuero-crudo" aria-label="Ver Mate Imperial Cuero Crudo">
-                        <span class="stock-ribbon" data-card-stock="mate-imperial-cuero-crudo"></span>
-                        <img src="/assets/mate-imperial-cuero-crudo.jpg" alt="Mate Imperial Cuero Crudo" />
-                        <div class="catalog-card-content">
-                          <p class="product-tag">Mate · Imperial</p>
-                          <h3>Mate Imperial Cuero Crudo</h3>
-                          <strong class="catalog-card-price" id="catalogPriceMateImperialCueroCrudo">$45.000</strong>
-                          <span class="catalog-card-action">Ver producto</span>
-                        </div>
-                      </button>
-                    </article>
-                  </div>
+                  <article class="catalog-product-card" data-catalog-card data-product-id="torpedo-roma" data-section="premium">
+                    <button class="catalog-card-button" type="button" data-open-product="torpedo-roma" aria-label="Ver Mate Torpedo Roma">
+                      <span class="stock-ribbon" data-card-stock="torpedo-roma"></span>
+                      <img src="/assets/torpedo-roma-negro.jpg" alt="Mate Torpedo Roma" />
+                      <div class="catalog-card-content">
+                        <p class="product-tag">Mate · Torpedo</p>
+                        <h3>Mate Torpedo Roma</h3>
+                        <strong class="catalog-card-price" id="catalogPriceTorpedoRoma">$50.000</strong>
+                        <span class="catalog-card-action">Ver producto</span>
+                      </div>
+                    </button>
+                  </article>
                 </div>
               </div>
 
-              <div class="catalog-subsection" data-subsection="economica">
-                <h4 class="catalog-subsection-title">Sección Económica</h4>
-                <div class="catalog-type-group" data-type="camioneros">
-                  <h5 class="catalog-type-title">Camioneros</h5>
-                  <div class="catalog-products-grid">
-                    <article class="catalog-product-card" data-catalog-card data-product-id="mate-criollito">
-                      <button class="catalog-card-button" type="button" data-open-product="mate-criollito" aria-label="Ver Mate Criollito">
-                        <span class="stock-ribbon" data-card-stock="mate-criollito"></span>
-                        <img src="/assets/mate-criollito.jpg" alt="Mate Criollito" />
-                        <div class="catalog-card-content">
-                          <p class="product-tag">Mate · Camionero</p>
-                          <h3>Mate Criollito</h3>
-                          <strong class="catalog-card-price" id="catalogPriceMateCriollito">$15.000</strong>
-                          <span class="catalog-card-action">Ver producto</span>
-                        </div>
-                      </button>
-                    </article>
+              <div class="catalog-type-group" data-type="imperiales">
+                <h5 class="catalog-type-title">Imperiales</h5>
+                <div class="catalog-products-grid">
+                  <article class="catalog-product-card" data-catalog-card data-product-id="mate-imperial-cuero-crudo" data-section="premium">
+                    <button class="catalog-card-button" type="button" data-open-product="mate-imperial-cuero-crudo" aria-label="Ver Mate Imperial Cuero Crudo">
+                      <span class="stock-ribbon" data-card-stock="mate-imperial-cuero-crudo"></span>
+                      <img src="/assets/mate-imperial-cuero-crudo.jpg" alt="Mate Imperial Cuero Crudo" />
+                      <div class="catalog-card-content">
+                        <p class="product-tag">Mate · Imperial</p>
+                        <h3>Mate Imperial Cuero Crudo</h3>
+                        <strong class="catalog-card-price" id="catalogPriceMateImperialCueroCrudo">$45.000</strong>
+                        <span class="catalog-card-action">Ver producto</span>
+                      </div>
+                    </button>
+                  </article>
 
-                    <article class="catalog-product-card" data-catalog-card data-product-id="mate-coquito">
-                      <button class="catalog-card-button" type="button" data-open-product="mate-coquito" aria-label="Ver Mate Coquito">
-                        <span class="stock-ribbon" data-card-stock="mate-coquito"></span>
-                        <img src="/assets/mate-coquito.jpg" alt="Mate Coquito" />
-                        <div class="catalog-card-content">
-                          <p class="product-tag">Mate · Camionero</p>
-                          <h3>Mate Coquito</h3>
-                          <strong class="catalog-card-price" id="catalogPriceMateCoquito">$28.000</strong>
-                          <span class="catalog-card-action">Ver producto</span>
-                        </div>
-                      </button>
-                    </article>
-                  </div>
+                  <article class="catalog-product-card" data-catalog-card data-product-id="mate-imperial-liso" data-section="economica">
+                    <button class="catalog-card-button" type="button" data-open-product="mate-imperial-liso" aria-label="Ver Mate Imperial Liso">
+                      <span class="stock-ribbon" data-card-stock="mate-imperial-liso"></span>
+                      <img src="/assets/mate-imperial-liso.jpg" alt="Mate Imperial Liso" />
+                      <div class="catalog-card-content">
+                        <p class="product-tag">Mate · Imperial</p>
+                        <h3>Mate Imperial Liso</h3>
+                        <strong class="catalog-card-price" id="catalogPriceMateImperialLiso">$35.000</strong>
+                        <span class="catalog-card-action">Ver producto</span>
+                      </div>
+                    </button>
+                  </article>
                 </div>
+              </div>
 
-                <div class="catalog-type-group" data-type="imperiales-eco">
-                  <h5 class="catalog-type-title">Imperiales</h5>
-                  <div class="catalog-products-grid">
-                    <article class="catalog-product-card" data-catalog-card data-product-id="mate-imperial-liso">
-                      <button class="catalog-card-button" type="button" data-open-product="mate-imperial-liso" aria-label="Ver Mate Imperial Liso">
-                        <span class="stock-ribbon" data-card-stock="mate-imperial-liso"></span>
-                        <img src="/assets/mate-imperial-liso.jpg" alt="Mate Imperial Liso" />
-                        <div class="catalog-card-content">
-                          <p class="product-tag">Mate · Imperial</p>
-                          <h3>Mate Imperial Liso</h3>
-                          <strong class="catalog-card-price" id="catalogPriceMateImperialLiso">$35.000</strong>
-                          <span class="catalog-card-action">Ver producto</span>
-                        </div>
-                      </button>
-                    </article>
-                  </div>
+              <div class="catalog-type-group" data-type="camioneros">
+                <h5 class="catalog-type-title">Camioneros</h5>
+                <div class="catalog-products-grid">
+                  <article class="catalog-product-card" data-catalog-card data-product-id="mate-criollito" data-section="economica">
+                    <button class="catalog-card-button" type="button" data-open-product="mate-criollito" aria-label="Ver Mate Criollito">
+                      <span class="stock-ribbon" data-card-stock="mate-criollito"></span>
+                      <img src="/assets/mate-criollito.jpg" alt="Mate Criollito" />
+                      <div class="catalog-card-content">
+                        <p class="product-tag">Mate · Camionero</p>
+                        <h3>Mate Criollito</h3>
+                        <strong class="catalog-card-price" id="catalogPriceMateCriollito">$15.000</strong>
+                        <span class="catalog-card-action">Ver producto</span>
+                      </div>
+                    </button>
+                  </article>
+
+                  <article class="catalog-product-card" data-catalog-card data-product-id="mate-coquito" data-section="economica">
+                    <button class="catalog-card-button" type="button" data-open-product="mate-coquito" aria-label="Ver Mate Coquito">
+                      <span class="stock-ribbon" data-card-stock="mate-coquito"></span>
+                      <img src="/assets/mate-coquito.jpg" alt="Mate Coquito" />
+                      <div class="catalog-card-content">
+                        <p class="product-tag">Mate · Camionero</p>
+                        <h3>Mate Coquito</h3>
+                        <strong class="catalog-card-price" id="catalogPriceMateCoquito">$28.000</strong>
+                        <span class="catalog-card-action">Ver producto</span>
+                      </div>
+                    </button>
+                  </article>
                 </div>
               </div>
             </div>

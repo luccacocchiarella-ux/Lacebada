@@ -252,20 +252,15 @@ const catalogCopy = {
     subtitle: 'Materas para llevar tu mate a todos lados.',
     breadcrumb: 'Inicio · Catálogo · Materas'
   },
-  'imperiales-premium': {
+  imperiales: {
     title: 'Imperiales',
-    subtitle: 'Mates imperiales de la línea premium.',
-    breadcrumb: 'Inicio · Mates · Premium · Imperiales'
+    subtitle: 'Mates imperiales, en sus versiones premium y económica.',
+    breadcrumb: 'Inicio · Mates · Imperiales'
   },
   camioneros: {
     title: 'Camioneros',
-    subtitle: 'Mates camioneros de la sección económica.',
-    breadcrumb: 'Inicio · Mates · Económica · Camioneros'
-  },
-  'imperiales-eco': {
-    title: 'Imperiales',
-    subtitle: 'Mates imperiales de la sección económica.',
-    breadcrumb: 'Inicio · Mates · Económica · Imperiales'
+    subtitle: 'Mates camioneros de primera calidad.',
+    breadcrumb: 'Inicio · Mates · Camioneros'
   },
   premium: {
     title: 'Mates · Sección Premium',
@@ -771,13 +766,13 @@ function showCatalog(filter = 'all', shouldScroll = true) {
   if (subtitle) subtitle.textContent = copy.subtitle;
   if (breadcrumb) breadcrumb.textContent = copy.breadcrumb;
 
-  // Filtros que viven dentro de Mates.
-  const typeFilters = ['torpedos', 'imperiales-premium', 'camioneros', 'imperiales-eco']; // un tipo puntual
-  const subsectionFilters = ['premium', 'economica']; // una sub-sección entera
+  // Mates se agrupan por ESTILO (Torpedos, Imperiales, Camioneros). La sección
+  // (premium/economica) es un atributo de cada producto, no una división visual.
+  const typeFilters = ['torpedos', 'imperiales', 'camioneros']; // un estilo puntual
+  const sectionFilters = ['premium', 'economica'];              // una sección entera
   const isTypeFilter = typeFilters.includes(filter);
-  const isSubsectionFilter = subsectionFilters.includes(filter);
-  const isMatesFlat = filter === 'mates'; // todos los mates, sin división Premium/Económica
-  const isMatesScoped = isTypeFilter || isSubsectionFilter || isMatesFlat;
+  const isSectionFilter = sectionFilters.includes(filter);
+  const isMatesScoped = isTypeFilter || isSectionFilter || filter === 'mates';
 
   // Cada filtro apunta a una categoría principal del catálogo.
   const filterToCategory = {
@@ -791,24 +786,20 @@ function showCatalog(filter = 'all', shouldScroll = true) {
     section.hidden = !visible;
   });
 
-  // Modo "plano" de Mates: oculta los títulos Premium/Económica y apila todo (con tipos).
-  const matesCategory = document.querySelector('.catalog-category[data-category="mates"]');
-  if (matesCategory) matesCategory.classList.toggle('is-flat', isMatesFlat);
-
-  // Sub-secciones: por sección (premium/economica), por tipo, o todas visibles.
-  document.querySelectorAll('.catalog-subsection').forEach(sub => {
-    if (isSubsectionFilter) {
-      sub.hidden = sub.dataset.subsection !== filter;
-    } else if (isTypeFilter) {
-      sub.hidden = !sub.querySelector(`.catalog-type-group[data-type="${filter}"]`);
-    } else {
-      sub.hidden = false;
-    }
+  // Productos de Mates: al filtrar por sección, se ocultan los de la otra sección.
+  document.querySelectorAll('.catalog-category[data-category="mates"] .catalog-product-card[data-section]').forEach(card => {
+    card.hidden = isSectionFilter ? card.dataset.section !== filter : false;
   });
 
-  // Grupos de tipo: solo el filtrado cuando se elige un tipo puntual.
-  document.querySelectorAll('.catalog-type-group').forEach(group => {
-    group.hidden = isTypeFilter ? group.dataset.type !== filter : false;
+  // Grupos por estilo: por estilo puntual, o los que tengan al menos un producto visible.
+  document.querySelectorAll('.catalog-category[data-category="mates"] .catalog-type-group').forEach(group => {
+    if (isTypeFilter) {
+      group.hidden = group.dataset.type !== filter;
+    } else if (isSectionFilter) {
+      group.hidden = !group.querySelector(`.catalog-product-card[data-section="${filter}"]`);
+    } else {
+      group.hidden = false;
+    }
   });
 
   document.querySelectorAll('[data-catalog-filter]').forEach(button => {
