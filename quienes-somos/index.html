@@ -63,10 +63,10 @@
             </div>
             <div class="mega-column">
               <a class="mega-heading" href="/catalogo#cat=mates" data-catalog-filter="mates">MATES</a>
-              <a class="mega-link" href="/catalogo#cat=mates" data-catalog-filter="mates">Sección Premium</a>
+              <a class="mega-link" href="/catalogo#cat=premium" data-catalog-filter="premium">Sección Premium</a>
               <a class="mega-link mega-sublink" href="/catalogo#cat=torpedos" data-catalog-filter="torpedos">Torpedos</a>
               <a class="mega-link mega-sublink" href="/catalogo#cat=imperiales-premium" data-catalog-filter="imperiales-premium">Imperiales</a>
-              <a class="mega-link" href="/catalogo#cat=mates" data-catalog-filter="mates">Sección Económica</a>
+              <a class="mega-link" href="/catalogo#cat=economica" data-catalog-filter="economica">Sección Económica</a>
               <a class="mega-link mega-sublink" href="/catalogo#cat=camioneros" data-catalog-filter="camioneros">Camioneros</a>
               <a class="mega-link mega-sublink" href="/catalogo#cat=imperiales-eco" data-catalog-filter="imperiales-eco">Imperiales</a>
             </div>
@@ -144,11 +144,6 @@
         <p>Respondemos en el mismo día, todos los días.</p>
       </div>
 
-      <div class="footer-col">
-        <h4>Envíos y pagos</h4>
-        <p>Envíos a todo el país por Correo Argentino. Pago por transferencia bancaria, coordinado por WhatsApp al finalizar tu compra.</p>
-      </div>
-
       <div class="footer-col footer-faq">
         <h4>Preguntas frecuentes</h4>
         <details>
@@ -217,6 +212,14 @@
         <label>Dirección
           <input type="text" name="direccion" autocomplete="street-address" required>
         </label>
+        <div class="checkout-row">
+          <label>Barrio (opcional)
+            <input type="text" name="barrio" autocomplete="address-level3">
+          </label>
+          <label>Departamento y piso (opcional)
+            <input type="text" name="departamento" autocomplete="address-line2">
+          </label>
+        </div>
         <label>Código postal
           <input type="text" name="codigoPostal" autocomplete="postal-code" required>
         </label>

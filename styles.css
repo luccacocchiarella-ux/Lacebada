@@ -271,6 +271,9 @@ input:focus, select:focus { outline: 3px solid rgba(143,79,44,.14); border-color
 .checkout-form { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border); }
 .checkout-form h3 { margin-bottom: 14px; }
 .checkout-form label { display: grid; gap: 8px; margin-bottom: 12px; color: var(--brand-deep); font-weight: 900; }
+.checkout-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.checkout-row label { font-size: .92rem; }
+.checkout-row input { padding: 11px 12px; }
 .cart-total { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 16px 0; padding-top: 12px; border-top: 1px solid var(--border); }
 .checkout-whatsapp { width: 100%; padding: 16px 18px; line-height: 1.4; }
 .form-note { margin: 12px 0 0; font-size: .86rem; }
@@ -502,9 +505,14 @@ input:focus, select:focus { outline: 3px solid rgba(143,79,44,.14); border-color
 }
 
 /* Cuando la sub-sección está sola en su columna, una sola tarjeta por fila */
-.catalog-subsection .catalog-products-grid {
+.catalog-category:not(.is-flat) .catalog-subsection .catalog-products-grid {
   grid-template-columns: 1fr;
 }
+
+/* "Mates" plano: sin división Premium/Económica, pero con subtítulos de tipo */
+.catalog-category.is-flat .catalog-subsection-title { display: none; }
+.catalog-category.is-flat .catalog-subsections { display: block; }
+.catalog-category.is-flat .catalog-subsection { margin-bottom: 0; }
 
 /* Tarjeta placeholder (no interactiva) */
 .catalog-card-placeholder .catalog-card-button.is-placeholder {
@@ -571,6 +579,8 @@ input:focus, select:focus { outline: 3px solid rgba(143,79,44,.14); border-color
   min-height: 58px;
   font-size: 1.12rem;
   line-height: 1.25;
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
 }
 
 .catalog-card-price {
@@ -697,6 +707,8 @@ input:focus, select:focus { outline: 3px solid rgba(143,79,44,.14); border-color
 .detail-info h2 {
   font-size: clamp(2rem, 4vw, 3.2rem);
   margin-bottom: 18px;
+  color: var(--text);
+  -webkit-text-fill-color: var(--text);
 }
 
 .detail-price {
@@ -894,7 +906,7 @@ input:focus, select:focus { outline: 3px solid rgba(143,79,44,.14); border-color
 /* ===== Footer ampliado ===== */
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.4fr 1.1fr 1fr 1.2fr;
+  grid-template-columns: 1.4fr 1.1fr 1.4fr;
   gap: 30px;
   align-items: start;
 }

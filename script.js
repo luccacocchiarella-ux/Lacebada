@@ -266,6 +266,16 @@ const catalogCopy = {
     title: 'Imperiales',
     subtitle: 'Mates imperiales de la sección económica.',
     breadcrumb: 'Inicio · Mates · Económica · Imperiales'
+  },
+  premium: {
+    title: 'Mates · Sección Premium',
+    subtitle: 'Nuestra línea premium de mates.',
+    breadcrumb: 'Inicio · Mates · Premium'
+  },
+  economica: {
+    title: 'Mates · Sección Económica',
+    subtitle: 'Nuestra línea económica de mates.',
+    breadcrumb: 'Inicio · Mates · Económica'
   }
 };
 
@@ -578,6 +588,8 @@ function buildOrderPayload(formData) {
     provincia: formData.get('provincia') || '',
     localidad: formData.get('localidad') || '',
     direccion: formData.get('direccion') || '',
+    barrio: formData.get('barrio') || '',
+    departamento: formData.get('departamento') || '',
     codigoPostal: formData.get('codigoPostal') || '',
     productos: cart.map(item => item.name).join(' | '),
     cantidades: cart.map(item => String(item.qty)).join(' | '),
@@ -592,6 +604,18 @@ function buildWhatsappMessage(order) {
     return `${index + 1}. ${item.name} | ${optionText(item.options)} | Cantidad: ${item.qty} | Subtotal: ${formatCurrency(item.price * item.qty)}`;
   }).join('\n');
 
+  const envio = [
+    `Nombre: ${order.nombre}`,
+    `Teléfono: ${order.telefono}`,
+    `Email: ${order.email}`,
+    `Provincia: ${order.provincia}`,
+    `Localidad: ${order.localidad}`,
+    `Dirección: ${order.direccion}`,
+  ];
+  if (order.barrio) envio.push(`Barrio: ${order.barrio}`);
+  if (order.departamento) envio.push(`Depto/Piso: ${order.departamento}`);
+  envio.push(`Código postal: ${order.codigoPostal}`);
+
   return `Hola La Cebada, quiero finalizar esta compra:
 
 ${lines}
@@ -599,13 +623,7 @@ ${lines}
 Total estimado: ${formatCurrency(getTotal())}
 
 Datos para el envío:
-Nombre: ${order.nombre}
-Teléfono: ${order.telefono}
-Email: ${order.email}
-Provincia: ${order.provincia}
-Localidad: ${order.localidad}
-Dirección: ${order.direccion}
-Código postal: ${order.codigoPostal}
+${envio.join('\n')}
 
 Medio de pago: Transferencia bancaria`;
 }
@@ -753,33 +771,44 @@ function showCatalog(filter = 'all', shouldScroll = true) {
   if (subtitle) subtitle.textContent = copy.subtitle;
   if (breadcrumb) breadcrumb.textContent = copy.breadcrumb;
 
-  // Filtros que son "tipos" dentro de Mates (sub-grupos de Premium/Económica).
-  const typeFilters = ['torpedos', 'imperiales-premium', 'camioneros', 'imperiales-eco'];
+  // Filtros que viven dentro de Mates.
+  const typeFilters = ['torpedos', 'imperiales-premium', 'camioneros', 'imperiales-eco']; // un tipo puntual
+  const subsectionFilters = ['premium', 'economica']; // una sub-sección entera
   const isTypeFilter = typeFilters.includes(filter);
+  const isSubsectionFilter = subsectionFilters.includes(filter);
+  const isMatesFlat = filter === 'mates'; // todos los mates, sin división Premium/Económica
+  const isMatesScoped = isTypeFilter || isSubsectionFilter || isMatesFlat;
 
   // Cada filtro apunta a una categoría principal del catálogo.
   const filterToCategory = {
-    mates: 'mates',
     bombillones: 'bombillones',
     materas: 'materas',
   };
-  const targetCategory = isTypeFilter ? 'mates' : filterToCategory[filter];
+  const targetCategory = isMatesScoped ? 'mates' : filterToCategory[filter];
 
   document.querySelectorAll('.catalog-category').forEach(section => {
     const visible = filter === 'all' || section.dataset.category === targetCategory;
     section.hidden = !visible;
   });
 
-  // Un filtro por tipo (ej. Torpedos, Imperiales, Camioneros) muestra solo ese
-  // grupo dentro de Mates y oculta las sub-secciones que no lo contienen.
-  const onlyType = isTypeFilter ? filter : null;
+  // Modo "plano" de Mates: oculta los títulos Premium/Económica y apila todo (con tipos).
+  const matesCategory = document.querySelector('.catalog-category[data-category="mates"]');
+  if (matesCategory) matesCategory.classList.toggle('is-flat', isMatesFlat);
 
+  // Sub-secciones: por sección (premium/economica), por tipo, o todas visibles.
   document.querySelectorAll('.catalog-subsection').forEach(sub => {
-    sub.hidden = onlyType ? !sub.querySelector(`.catalog-type-group[data-type="${onlyType}"]`) : false;
+    if (isSubsectionFilter) {
+      sub.hidden = sub.dataset.subsection !== filter;
+    } else if (isTypeFilter) {
+      sub.hidden = !sub.querySelector(`.catalog-type-group[data-type="${filter}"]`);
+    } else {
+      sub.hidden = false;
+    }
   });
 
+  // Grupos de tipo: solo el filtrado cuando se elige un tipo puntual.
   document.querySelectorAll('.catalog-type-group').forEach(group => {
-    group.hidden = onlyType ? group.dataset.type !== onlyType : false;
+    group.hidden = isTypeFilter ? group.dataset.type !== filter : false;
   });
 
   document.querySelectorAll('[data-catalog-filter]').forEach(button => {
