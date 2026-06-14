@@ -257,6 +257,16 @@ const catalogCopy = {
     subtitle: 'Mates imperiales, en sus versiones premium y económica.',
     breadcrumb: 'Inicio · Mates · Imperiales'
   },
+  'imperiales-premium': {
+    title: 'Imperiales · Sección Premium',
+    subtitle: 'Mates imperiales de nuestra línea premium.',
+    breadcrumb: 'Inicio · Mates · Premium · Imperiales'
+  },
+  'imperiales-economica': {
+    title: 'Imperiales · Sección Económica',
+    subtitle: 'Mates imperiales de nuestra línea económica.',
+    breadcrumb: 'Inicio · Mates · Económica · Imperiales'
+  },
   camioneros: {
     title: 'Camioneros',
     subtitle: 'Mates camioneros de primera calidad.',
@@ -770,9 +780,16 @@ function showCatalog(filter = 'all', shouldScroll = true) {
   // (premium/economica) es un atributo de cada producto, no una división visual.
   const typeFilters = ['torpedos', 'imperiales', 'camioneros']; // un estilo puntual
   const sectionFilters = ['premium', 'economica'];              // una sección entera
+  // Filtros combinados estilo+sección: un mismo estilo (ej. Imperiales) que existe
+  // en ambas secciones, acotado a una sola (ej. solo los Imperiales premium).
+  const comboFilters = {
+    'imperiales-premium': { type: 'imperiales', section: 'premium' },
+    'imperiales-economica': { type: 'imperiales', section: 'economica' },
+  };
+  const combo = comboFilters[filter];
   const isTypeFilter = typeFilters.includes(filter);
   const isSectionFilter = sectionFilters.includes(filter);
-  const isMatesScoped = isTypeFilter || isSectionFilter || filter === 'mates';
+  const isMatesScoped = isTypeFilter || isSectionFilter || !!combo || filter === 'mates';
 
   // Cada filtro apunta a una categoría principal del catálogo.
   const filterToCategory = {
@@ -786,15 +803,23 @@ function showCatalog(filter = 'all', shouldScroll = true) {
     section.hidden = !visible;
   });
 
-  // Productos de Mates: al filtrar por sección, se ocultan los de la otra sección.
+  // Productos de Mates: al filtrar por sección (o combinado), se ocultan los de la otra sección.
   document.querySelectorAll('.catalog-category[data-category="mates"] .catalog-product-card[data-section]').forEach(card => {
-    card.hidden = isSectionFilter ? card.dataset.section !== filter : false;
+    if (isSectionFilter) {
+      card.hidden = card.dataset.section !== filter;
+    } else if (combo) {
+      card.hidden = card.dataset.section !== combo.section;
+    } else {
+      card.hidden = false;
+    }
   });
 
-  // Grupos por estilo: por estilo puntual, o los que tengan al menos un producto visible.
+  // Grupos por estilo: por estilo puntual, combinado, o los que tengan al menos un producto visible.
   document.querySelectorAll('.catalog-category[data-category="mates"] .catalog-type-group').forEach(group => {
     if (isTypeFilter) {
       group.hidden = group.dataset.type !== filter;
+    } else if (combo) {
+      group.hidden = group.dataset.type !== combo.type;
     } else if (isSectionFilter) {
       group.hidden = !group.querySelector(`.catalog-product-card[data-section="${filter}"]`);
     } else {
