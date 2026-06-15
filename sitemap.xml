@@ -4,4 +4,56 @@
     <loc>https://lacebada.com.ar/</loc>
     <priority>1.0</priority>
   </url>
+  <url>
+    <loc>https://lacebada.com.ar/catalogo</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/quienes-somos</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/torpedo-joyero</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/torpedo-roma</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/mate-imperial-cuero-crudo</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/mate-imperial-liso</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/mate-criollito</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/mate-coquito</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/matera-uruguaya</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/bombillon-cincelado-colonial</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/bombillon-cincelado-el-noble</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/bombillon-simple</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/bombillon-premium</loc>
+    <priority>0.8</priority>
+  </url>
 </urlset>

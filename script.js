@@ -1123,7 +1123,10 @@ function initShare() {
   const nameEl = modal.querySelector('#shareProductName');
 
   function openShare(id, name) {
-    const url = `${location.origin}/catalogo#${id}`;
+    // URL propia del producto (con og:image/título específicos) para que la
+    // previsualización en redes muestre el producto y no el logo. La página
+    // redirige a /catalogo#id para las personas.
+    const url = `${location.origin}/producto/${id}`;
     const text = `Mirá este producto de La Cebada: ${name}`;
     const shareText = `${text} ${url}`;
     const enc = encodeURIComponent;
