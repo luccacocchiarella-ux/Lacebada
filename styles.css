@@ -878,8 +878,31 @@ input:focus, select:focus { outline: 3px solid rgba(143,79,44,.14); border-color
 
 /* ===== Home: hero de bienvenida centrado ===== */
 .hero-home { text-align: center; }
+
+/* Fondo con fotos que rotan (fundido cruzado) */
+.hero-slideshow { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.hero-slide {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0; transition: opacity 1.4s ease-in-out;
+  will-change: opacity;
+}
+.hero-slide.is-active { opacity: 1; }
+/* Velo crema para que el título oscuro se siga leyendo sobre las fotos */
+.hero-home .hero-overlay {
+  z-index: 1;
+  background:
+    linear-gradient(rgba(245,240,232,.84), rgba(245,240,232,.9)),
+    radial-gradient(circle at 25% 30%, rgba(166,108,58,.18), transparent 22rem),
+    radial-gradient(circle at 75% 70%, rgba(203,147,88,.18), transparent 24rem);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide { transition: none; }
+}
+
 .hero-home-inner {
   position: relative;
+  z-index: 2;
   max-width: 880px;
   margin-inline: auto;
   display: flex;

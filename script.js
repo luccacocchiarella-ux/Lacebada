@@ -1036,6 +1036,49 @@ function initScrollButtons() {
   });
 }
 
+// Fondo del hero (Home): rota las fotos con fundido cruzado. Carga cada imagen
+// recién cuando se necesita (la 1ª ya viene inline) para no frenar la página.
+function initHeroSlideshow() {
+  const box = document.querySelector('[data-hero-slideshow]');
+  if (!box) return;
+
+  const slides = Array.from(box.querySelectorAll('.hero-slide'));
+  if (slides.length < 2) return;
+
+  // Respetar "reducir movimiento": queda solo la primera foto, fija.
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const loaded = new Set([0]);
+  function loadSlide(index) {
+    const slide = slides[index];
+    if (!slide || loaded.has(index)) return Promise.resolve();
+    const url = slide.dataset.bg;
+    if (!url) { loaded.add(index); return Promise.resolve(); }
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = img.onerror = () => {
+        slide.style.backgroundImage = `url('${url}')`;
+        loaded.add(index);
+        resolve();
+      };
+      img.src = url;
+    });
+  }
+
+  let current = 0;
+  async function advance() {
+    const next = (current + 1) % slides.length;
+    await loadSlide(next);
+    slides[current].classList.remove('is-active');
+    slides[next].classList.add('is-active');
+    current = next;
+    loadSlide((next + 1) % slides.length); // precarga la siguiente
+  }
+
+  loadSlide(1); // dejar lista la segunda
+  window.setInterval(advance, 5000);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initNavigation();
   initCatalog();
@@ -1043,6 +1086,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCart();
   initScrollButtons();
   initShare();
+  initHeroSlideshow();
 
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
