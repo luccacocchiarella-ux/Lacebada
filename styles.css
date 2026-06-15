@@ -888,14 +888,18 @@ input:focus, select:focus { outline: 3px solid rgba(143,79,44,.14); border-color
   will-change: opacity;
 }
 .hero-slide.is-active { opacity: 1; }
-/* Velo crema para que el título oscuro se siga leyendo sobre las fotos */
+/* Velo crema para que el título oscuro se siga leyendo sobre las fotos
+   (más fuerte detrás del texto, dejando ver bien la foto en los bordes) */
 .hero-home .hero-overlay {
   z-index: 1;
   background:
-    linear-gradient(rgba(245,240,232,.84), rgba(245,240,232,.9)),
-    radial-gradient(circle at 25% 30%, rgba(166,108,58,.18), transparent 22rem),
-    radial-gradient(circle at 75% 70%, rgba(203,147,88,.18), transparent 24rem);
+    radial-gradient(ellipse 70% 60% at 50% 45%, rgba(245,240,232,.74), rgba(245,240,232,.34) 75%, rgba(245,240,232,.2)),
+    linear-gradient(rgba(245,240,232,.18), rgba(245,240,232,.42));
 }
+/* Pequeño halo claro detrás del texto para legibilidad sobre fotos variadas */
+.hero-home .eyebrow,
+.hero-home h1,
+.hero-home .hero-text { text-shadow: 0 1px 14px rgba(245,240,232,.9); }
 @media (prefers-reduced-motion: reduce) {
   .hero-slide { transition: none; }
 }
