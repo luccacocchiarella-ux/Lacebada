@@ -12,6 +12,10 @@
     <loc>https://lacebada.com.ar/quienes-somos</loc>
     <priority>0.6</priority>
   </url>
+  <url>
+    <loc>https://lacebada.com.ar/curar-tu-mate</loc>
+    <priority>0.7</priority>
+  </url>
 <!-- OCULTO TEMPORAL (sin stock) - restaurar cuando llegue
   <url>
     <loc>https://lacebada.com.ar/producto/torpedo-joyero</loc>
