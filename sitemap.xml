@@ -12,10 +12,12 @@
     <loc>https://lacebada.com.ar/quienes-somos</loc>
     <priority>0.6</priority>
   </url>
+<!-- OCULTO TEMPORAL (sin stock) - restaurar cuando llegue
   <url>
     <loc>https://lacebada.com.ar/producto/torpedo-joyero</loc>
     <priority>0.8</priority>
   </url>
+-->
   <url>
     <loc>https://lacebada.com.ar/producto/torpedo-roma</loc>
     <priority>0.8</priority>
@@ -48,6 +50,7 @@
     <loc>https://lacebada.com.ar/producto/bombillon-cincelado-el-noble</loc>
     <priority>0.8</priority>
   </url>
+<!-- OCULTO TEMPORAL (sin stock) - restaurar cuando lleguen
   <url>
     <loc>https://lacebada.com.ar/producto/bombillon-simple</loc>
     <priority>0.8</priority>
@@ -56,4 +59,5 @@
     <loc>https://lacebada.com.ar/producto/bombillon-premium</loc>
     <priority>0.8</priority>
   </url>
+-->
 </urlset>

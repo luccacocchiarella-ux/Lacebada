@@ -45,6 +45,7 @@ function saveCart() {
 }
 
 const products = {
+  /* OCULTO TEMPORAL (sin stock) - restaurar torpedo-joyero, bombillon-simple y bombillon-premium cuando lleguen
   'torpedo-joyero': {
     name: 'Torpedo cincelado joyero',
     categoryLabel: 'Mate · Torpedo',
@@ -101,6 +102,7 @@ const products = {
     getQty: () => Number(document.getElementById('bombillonPremiumQty')?.value || 1),
     getSku: (options) => `bombillon-cincelado-premium-ancho-${normalizeSlug(options.formato)}-${normalizeSlug(options.pico)}`,
   },
+  */
   'torpedo-roma': {
     name: 'Mate Torpedo Roma',
     categoryLabel: 'Mate · Torpedo',
