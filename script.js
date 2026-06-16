@@ -600,7 +600,7 @@ function buildOrderPayload(formData) {
     cantidades: cart.map(item => String(item.qty)).join(' | '),
     variantes: cart.map(item => optionText(item.options)).join(' | '),
     total: formatCurrency(getTotal()),
-    medioPago: 'Transferencia bancaria',
+    medioPago: 'Se coordina por WhatsApp',
   };
 }
 
@@ -630,7 +630,7 @@ Total estimado: ${formatCurrency(getTotal())}
 Datos para el envío:
 ${envio.join('\n')}
 
-Medio de pago: Transferencia bancaria`;
+Medio de pago: ${order.medioPago}`;
 }
 
 async function saveOrderToGoogleSheets(order) {
