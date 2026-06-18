@@ -256,33 +256,13 @@ const catalogCopy = {
   },
   imperiales: {
     title: 'Imperiales',
-    subtitle: 'Mates imperiales, en sus versiones premium y económica.',
+    subtitle: 'Mates imperiales de primera calidad.',
     breadcrumb: 'Inicio · Mates · Imperiales'
-  },
-  'imperiales-premium': {
-    title: 'Imperiales · Sección Premium',
-    subtitle: 'Mates imperiales de nuestra línea premium.',
-    breadcrumb: 'Inicio · Mates · Premium · Imperiales'
-  },
-  'imperiales-economica': {
-    title: 'Imperiales · Sección Económica',
-    subtitle: 'Mates imperiales de nuestra línea económica.',
-    breadcrumb: 'Inicio · Mates · Económica · Imperiales'
   },
   camioneros: {
     title: 'Camioneros',
     subtitle: 'Mates camioneros de primera calidad.',
     breadcrumb: 'Inicio · Mates · Camioneros'
-  },
-  premium: {
-    title: 'Mates · Sección Premium',
-    subtitle: 'Nuestra línea premium de mates.',
-    breadcrumb: 'Inicio · Mates · Premium'
-  },
-  economica: {
-    title: 'Mates · Sección Económica',
-    subtitle: 'Nuestra línea económica de mates.',
-    breadcrumb: 'Inicio · Mates · Económica'
   }
 };
 
@@ -759,6 +739,10 @@ function closeCart() {
 }
 
 function showCatalog(filter = 'all', shouldScroll = true) {
+  // Filtros válidos; cualquier otro (ej. links viejos #cat=premium) cae a "all".
+  const validFilters = ['all', 'mates', 'torpedos', 'imperiales', 'camioneros', 'bombillones', 'materas'];
+  if (!validFilters.includes(filter)) filter = 'all';
+
   activeCatalogFilter = filter;
   const listView = document.getElementById('catalogListView');
   const detailView = document.getElementById('catalogDetailView');
@@ -778,20 +762,10 @@ function showCatalog(filter = 'all', shouldScroll = true) {
   if (subtitle) subtitle.textContent = copy.subtitle;
   if (breadcrumb) breadcrumb.textContent = copy.breadcrumb;
 
-  // Mates se agrupan por ESTILO (Torpedos, Imperiales, Camioneros). La sección
-  // (premium/economica) es un atributo de cada producto, no una división visual.
+  // Mates se agrupan por ESTILO (Torpedos, Imperiales, Camioneros). No hay división por sección.
   const typeFilters = ['torpedos', 'imperiales', 'camioneros']; // un estilo puntual
-  const sectionFilters = ['premium', 'economica'];              // una sección entera
-  // Filtros combinados estilo+sección: un mismo estilo (ej. Imperiales) que existe
-  // en ambas secciones, acotado a una sola (ej. solo los Imperiales premium).
-  const comboFilters = {
-    'imperiales-premium': { type: 'imperiales', section: 'premium' },
-    'imperiales-economica': { type: 'imperiales', section: 'economica' },
-  };
-  const combo = comboFilters[filter];
   const isTypeFilter = typeFilters.includes(filter);
-  const isSectionFilter = sectionFilters.includes(filter);
-  const isMatesScoped = isTypeFilter || isSectionFilter || !!combo || filter === 'mates';
+  const isMatesScoped = isTypeFilter || filter === 'mates';
 
   // Cada filtro apunta a una categoría principal del catálogo.
   const filterToCategory = {
@@ -805,28 +779,9 @@ function showCatalog(filter = 'all', shouldScroll = true) {
     section.hidden = !visible;
   });
 
-  // Productos de Mates: al filtrar por sección (o combinado), se ocultan los de la otra sección.
-  document.querySelectorAll('.catalog-category[data-category="mates"] .catalog-product-card[data-section]').forEach(card => {
-    if (isSectionFilter) {
-      card.hidden = card.dataset.section !== filter;
-    } else if (combo) {
-      card.hidden = card.dataset.section !== combo.section;
-    } else {
-      card.hidden = false;
-    }
-  });
-
-  // Grupos por estilo: por estilo puntual, combinado, o los que tengan al menos un producto visible.
+  // Grupos por estilo: solo el elegido si se filtra por un estilo puntual; si no, todos.
   document.querySelectorAll('.catalog-category[data-category="mates"] .catalog-type-group').forEach(group => {
-    if (isTypeFilter) {
-      group.hidden = group.dataset.type !== filter;
-    } else if (combo) {
-      group.hidden = group.dataset.type !== combo.type;
-    } else if (isSectionFilter) {
-      group.hidden = !group.querySelector(`.catalog-product-card[data-section="${filter}"]`);
-    } else {
-      group.hidden = false;
-    }
+    group.hidden = isTypeFilter ? group.dataset.type !== filter : false;
   });
 
   document.querySelectorAll('[data-catalog-filter]').forEach(button => {
