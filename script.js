@@ -2,10 +2,8 @@ const WHATSAPP_NUMBER = '541150373123';
 const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbysoYTLNiyI71_FAz7wxOZtyYDIWDtRSGgDeb7Hx6cyaKEb-N5fzgivaQZEoC61TnV5/exec';
 
 const fallbackStock = {
-  'torpedo-suela': { stock: 2, activo: true, precio: 60000 },
-  'torpedo-borravino': { stock: 1, activo: true, precio: 60000 },
-  'torpedo-chocolate': { stock: 1, activo: true, precio: 60000 },
-  'torpedo-negro': { stock: 1, activo: true, precio: 60000 },
+  'torpedo-negro': { stock: 1, activo: true, precio: 65000 },
+  'torpedo-borravino': { stock: 1, activo: true, precio: 65000 },
   'bombillon-anilla-simple-curvo-bronce': { stock: 2, activo: true, precio: 30000 },
   'bombillon-anilla-simple-recto-bronce': { stock: 2, activo: true, precio: 30000 },
   'bombillon-cincelado-premium-ancho-curvo-bronce': { stock: 2, activo: true, precio: 32000 },
@@ -16,6 +14,8 @@ const fallbackStock = {
   'mate-coquito': { stock: 2, activo: true, precio: 28000 },
   'mate-imperial-cuero-crudo': { stock: 1, activo: true, precio: 45000 },
   'mate-imperial-liso': { stock: 1, activo: true, precio: 35000 },
+  'mate-imperial-campero': { stock: 1, activo: true, precio: 48000 },
+  'mate-virola-volcada': { stock: 1, activo: true, precio: 78000 },
   'matera-uruguaya': { stock: 2, activo: true, precio: 25000 },
   'bombillon-cincelado-colonial': { stock: 2, activo: true, precio: 25000 },
   'bombillon-cincelado-el-noble': { stock: 2, activo: true, precio: 25000 },
@@ -45,27 +45,25 @@ function saveCart() {
 }
 
 const products = {
-  /* OCULTO TEMPORAL (sin stock) - restaurar torpedo-joyero, bombillon-simple y bombillon-premium cuando lleguen
   'torpedo-joyero': {
-    name: 'Torpedo cincelado joyero',
+    name: 'Mate Torpedo Cincelado Joyero',
     categoryLabel: 'Mate · Torpedo',
-    price: 60000,
-    skus: ['torpedo-suela', 'torpedo-borravino', 'torpedo-chocolate', 'torpedo-negro'],
+    price: 65000,
+    skus: ['torpedo-negro', 'torpedo-borravino'],
     qtyInputId: 'mateQty',
     buttonSelector: '[data-product-id="torpedo-joyero"]',
     stockMessageId: 'mateStockMessage',
     detailPriceIds: ['matePrice', 'heroProductPrice'],
     catalogPriceId: 'catalogPriceTorpedo',
     cardStockSelector: '[data-card-stock="torpedo-joyero"]',
-    getOptions: () => ({ color: document.getElementById('mateColorSelect')?.value || 'Suela' }),
+    getOptions: () => ({ color: document.getElementById('mateColorSelect')?.value || 'Negro' }),
     getQty: () => Number(document.getElementById('mateQty')?.value || 1),
     getSku: (options) => ({
-      Suela: 'torpedo-suela',
-      Borravino: 'torpedo-borravino',
-      Chocolate: 'torpedo-chocolate',
       Negro: 'torpedo-negro',
-    }[options.color] || 'torpedo-suela'),
+      Borravino: 'torpedo-borravino',
+    }[options.color] || 'torpedo-negro'),
   },
+  /* OCULTO TEMPORAL (sin stock) - restaurar bombillon-simple y bombillon-premium cuando lleguen
   'bombillon-simple': {
     name: 'Bombillón anilla simple',
     categoryLabel: 'Bombillón',
@@ -180,6 +178,36 @@ const products = {
     getOptions: () => ({}),
     getQty: () => Number(document.getElementById('mateImperialLisoQty')?.value || 1),
     getSku: () => 'mate-imperial-liso',
+  },
+  'mate-imperial-campero': {
+    name: 'Mate Imperial Campero',
+    categoryLabel: 'Mate · Imperial',
+    price: 48000,
+    skus: ['mate-imperial-campero'],
+    qtyInputId: 'mateImperialCamperoQty',
+    buttonSelector: '[data-product-id="mate-imperial-campero"]',
+    stockMessageId: 'mateImperialCamperoStockMessage',
+    detailPriceIds: ['mateImperialCamperoPrice'],
+    catalogPriceId: 'catalogPriceMateImperialCampero',
+    cardStockSelector: '[data-card-stock="mate-imperial-campero"]',
+    getOptions: () => ({}),
+    getQty: () => Number(document.getElementById('mateImperialCamperoQty')?.value || 1),
+    getSku: () => 'mate-imperial-campero',
+  },
+  'mate-virola-volcada': {
+    name: 'Mate Virola Volcada',
+    categoryLabel: 'Mate · Camionero',
+    price: 78000,
+    skus: ['mate-virola-volcada'],
+    qtyInputId: 'mateVirolaVolcadaQty',
+    buttonSelector: '[data-product-id="mate-virola-volcada"]',
+    stockMessageId: 'mateVirolaVolcadaStockMessage',
+    detailPriceIds: ['mateVirolaVolcadaPrice'],
+    catalogPriceId: 'catalogPriceMateVirolaVolcada',
+    cardStockSelector: '[data-card-stock="mate-virola-volcada"]',
+    getOptions: () => ({}),
+    getQty: () => Number(document.getElementById('mateVirolaVolcadaQty')?.value || 1),
+    getSku: () => 'mate-virola-volcada',
   },
   'matera-uruguaya': {
     name: 'Matera Uruguaya',

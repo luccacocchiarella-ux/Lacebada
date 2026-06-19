@@ -16,14 +16,20 @@
     <loc>https://lacebada.com.ar/curar-tu-mate</loc>
     <priority>0.7</priority>
   </url>
-<!-- OCULTO TEMPORAL (sin stock) - restaurar cuando llegue
   <url>
     <loc>https://lacebada.com.ar/producto/torpedo-joyero</loc>
     <priority>0.8</priority>
   </url>
--->
   <url>
     <loc>https://lacebada.com.ar/producto/torpedo-roma</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/mate-imperial-campero</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/mate-virola-volcada</loc>
     <priority>0.8</priority>
   </url>
   <url>
