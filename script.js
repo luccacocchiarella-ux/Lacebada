@@ -514,11 +514,32 @@ function updateProductStockUI(productId) {
   }
 }
 
+// Reordena las tarjetas del catálogo: disponibles primero, sin stock al final
+// (manteniendo el orden relativo dentro de cada grupo).
+function reorderCatalogByStock() {
+  const grids = document.querySelectorAll('#catalogListView .catalog-products-grid');
+  grids.forEach(grid => {
+    const cards = Array.from(grid.querySelectorAll(':scope > .catalog-product-card[data-product-id]'));
+    if (cards.length < 2) return;
+
+    const disponibles = [];
+    const sinStock = [];
+    cards.forEach(card => {
+      const id = card.dataset.productId;
+      const ok = products[id] ? isProductAvailable(id) : true;
+      (ok ? disponibles : sinStock).push(card);
+    });
+
+    [...disponibles, ...sinStock].forEach(card => grid.appendChild(card));
+  });
+}
+
 function updateAllProductStockUI() {
   Object.keys(products).forEach(productId => {
     updateProductPriceUI(productId);
     updateProductStockUI(productId);
   });
+  reorderCatalogByStock();
 }
 
 function addToCart(productId) {
