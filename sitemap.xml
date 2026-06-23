@@ -60,6 +60,26 @@
     <loc>https://lacebada.com.ar/producto/bombillon-cincelado-el-noble</loc>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/mate-torpedo-campero</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/mate-torpedo-roma-calado</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/bombillon-pico-de-rey</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/canasta-matera-cuero-lisa</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://lacebada.com.ar/producto/mate-camionero-algarrobo</loc>
+    <priority>0.8</priority>
+  </url>
 <!-- OCULTO TEMPORAL (sin stock) - restaurar cuando lleguen
   <url>
     <loc>https://lacebada.com.ar/producto/bombillon-simple</loc>
