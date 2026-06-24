@@ -1,4 +1,4 @@
-const WHATSAPP_NUMBER = '541150373123';
+const WHATSAPP_NUMBER = '5492374109734';
 const GOOGLE_SHEETS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbysoYTLNiyI71_FAz7wxOZtyYDIWDtRSGgDeb7Hx6cyaKEb-N5fzgivaQZEoC61TnV5/exec';
 
 const fallbackStock = {
